@@ -370,8 +370,10 @@ document.querySelectorAll<HTMLElement>('[data-zoom-img]').forEach((b) => b.addEv
   img.src = b.querySelector('img')?.getAttribute('src') ?? b.dataset.zoomImg!;
   img.alt = b.querySelector('img')?.alt ?? '';
   zoomDlg.showModal();
+  lockScroll(true);
   unlock('lynx');
 }));
+zoomDlg?.addEventListener('close', () => lockScroll(false));
 zoomDlg?.querySelector('[data-zoom-close]')?.addEventListener('click', () => zoomDlg.close());
 zoomDlg?.addEventListener('click', (e) => { if (e.target === zoomDlg) zoomDlg.close(); });
 
@@ -438,7 +440,26 @@ function toast(id: string) {
 render();
 
 const dialog = document.querySelector<HTMLDialogElement>('[data-ach-dialog]');
-document.querySelector('[data-ach-open]')?.addEventListener('click', () => dialog?.showModal());
+// Pendant que la liste est ouverte, la page derrière ne défile pas
+let lockedY = 0;
+function lockScroll(on: boolean) {
+  const de = document.documentElement;
+  if (on) {
+    if (de.classList.contains('no-scroll')) return;
+    lockedY = scrollY;
+    de.style.setProperty('--sbw', `${innerWidth - de.clientWidth}px`);
+    de.style.setProperty('--lock-top', `-${lockedY}px`);
+    de.classList.add('no-scroll');
+  } else if (de.classList.contains('no-scroll')) {
+    de.classList.remove('no-scroll');
+    // Retour exact à la position d'avant, sans animation
+    de.style.scrollBehavior = 'auto';
+    scrollTo(0, lockedY);
+    de.style.scrollBehavior = '';
+  }
+}
+document.querySelector('[data-ach-open]')?.addEventListener('click', () => { dialog?.showModal(); lockScroll(true); });
+dialog?.addEventListener('close', () => lockScroll(false));
 dialog?.querySelector('[data-ach-close]')?.addEventListener('click', () => dialog.close());
 dialog?.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
 
