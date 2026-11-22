@@ -3,18 +3,22 @@ import { achievements } from '../data/achievements';
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // 1. Tête de lecture + timecode : la page entière dure 2 minutes (le temps d'un recruteur)
-const DURATION = 120; // secondes
+// Durée de lecture réelle, calculée sur le texte de la page (environ 200 mots par minute)
+const WORDS = (document.querySelector('main')?.textContent ?? '').split(/\s+/).filter(Boolean).length;
+const DURATION = Math.max(60, Math.round((WORDS / 200) * 60)); // secondes
 const FPS = 25;
 const tcEls = document.querySelectorAll<HTMLElement>('[data-tc]');
 const head = document.querySelector<HTMLElement>('[data-head]');
 const fill = document.querySelector<HTMLElement>('[data-fill]');
 const pad = (n: number) => String(n).padStart(2, '0');
+const fmtTc = (t: number) => `00:${pad(Math.floor(t / 60))}:${pad(Math.floor(t % 60))}:${pad(Math.floor((t % 1) * FPS))}`;
+document.querySelectorAll<HTMLElement>('[data-dur]').forEach((el) => (el.textContent = fmtTc(DURATION)));
 
 function onScroll() {
   const max = document.documentElement.scrollHeight - innerHeight;
   const p = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
   const t = p * DURATION;
-  const tc = `00:${pad(Math.floor(t / 60))}:${pad(Math.floor(t % 60))}:${pad(Math.floor((t % 1) * FPS))}`;
+  const tc = fmtTc(t);
   tcEls.forEach((el) => (el.textContent = tc));
   if (head) head.style.left = `${p * 100}%`;
   if (fill) fill.style.width = `${p * 100}%`;
