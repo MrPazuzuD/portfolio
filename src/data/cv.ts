@@ -42,7 +42,7 @@ export const profile = {
     youtube: 'https://www.youtube.com/@pazuzuuu_',
     steam: 'https://steamcommunity.com/profiles/76561199040627675/',
     // Chaîne pour laquelle je fais l'essentiel de mon montage (lien à confirmer)
-    tacxtv: '' as string,
+    tacxtv: 'https://www.youtube.com/@tacxtv' as string,
   },
   cvPdf: '/cv/Marine-Rimpot-CV.pdf',
 };
