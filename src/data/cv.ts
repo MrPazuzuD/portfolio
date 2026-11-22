@@ -1,0 +1,302 @@
+// Tout le contenu du site et du CV PDF vient de ce fichier.
+// Règle : rien de privé ici (ni téléphone, ni adresse, ni mail perso). Le dépôt est public.
+
+export type Track = 'pro' | 'formation' | 'crea';
+
+export interface Clip {
+  id: string;
+  track: Track;
+  /** Ligne de la timeline (V1, V2, A1...) */
+  lane: string;
+  title: string;
+  org: string;
+  place?: string;
+  /** Format AAAA-MM. `end: null` = en cours */
+  start: string;
+  end: string | null;
+  /** Texte affiché pour les dates (le CV n'a parfois que les années) */
+  period: string;
+  tag?: string;
+  points: string[];
+}
+
+export const profile = {
+  firstName: 'Marine',
+  lastName: 'Rimpot',
+  title: 'Technicienne support & systèmes',
+  current: 'Hotline et support logiciel chez 2DCOM',
+  location: 'Épinal (88)',
+  pitch:
+    'Je dépanne, j’explique, j’automatise quand je peux. Le reste du temps, je monte des vidéos, je chante et je joue.',
+  // Mettre le chemin d'une image dans public/ (ex. '/photo.webp') pour afficher la photo
+  photo: null as string | null,
+  // Laisser vide tant qu'il n'y a pas d'adresse pro dédiée
+  email: '' as string,
+  links: {
+    linkedin: 'https://www.linkedin.com/in/marine-rimpot-927815208/',
+    github: 'https://github.com/MrPazuzuD',
+    twitch: 'https://www.twitch.tv/pazuzuuu_',
+  },
+  cvPdf: '/cv/Marine-Rimpot-CV.pdf',
+};
+
+export const experiences: Clip[] = [
+  {
+    id: '2dcom',
+    track: 'pro',
+    lane: 'V1',
+    title: 'Hotlineuse, support logiciel',
+    org: '2DCOM',
+    place: 'Chavigny (54)',
+    start: '2026-10',
+    end: null,
+    period: 'Depuis oct. 2026',
+    tag: 'CDI',
+    points: [
+      'Assistance téléphonique sur des logiciels de gestion pour les professionnels du livre',
+      'Analyse des demandes, diagnostic et résolution',
+      'Accompagnement des clients dans la prise en main des logiciels',
+    ],
+  },
+  {
+    id: 'sidsic',
+    track: 'pro',
+    lane: 'V1',
+    title: 'Technicienne support & systèmes',
+    org: 'Préfecture des Vosges, SIDSIC',
+    place: 'Épinal',
+    start: '2022-09',
+    end: '2024-08',
+    period: '2022 – 2024',
+    tag: 'Alternance',
+    points: [
+      'Support N1/N2 sur site : incidents matériel, logiciel et réseau',
+      'Configuration et déploiement de postes Windows, Active Directory et GPO',
+      'Gestion des tickets et de l’inventaire du parc (GLPI, OCS Inventory)',
+      'Administratrice locale WAPT sur un parc de 450 postes Windows (projet pilote national, Ministère de l’Intérieur) : installation et configuration du serveur WAPT sur Debian 12 en environnement de test, création et correction de paquets Python, déploiement sur le parc, formation des techniciens',
+    ],
+  },
+  {
+    id: 'leclerc',
+    track: 'pro',
+    lane: 'V1',
+    title: 'Mise en rayon et inventaire',
+    org: 'E.Leclerc',
+    place: 'Neufchâteau',
+    start: '2021-07',
+    end: '2021-09',
+    period: 'Juil. – sept. 2021',
+    tag: 'Saisonnier',
+    points: ['Réassort, inventaire et rigueur sur les stocks'],
+  },
+  {
+    id: 'mjc',
+    track: 'pro',
+    lane: 'V1',
+    title: 'Animatrice enfants',
+    org: 'MJC Beauregard',
+    place: 'Nancy',
+    start: '2019-09',
+    end: '2020-07',
+    period: 'Sept. 2019 – juil. 2020',
+    points: ['Préparation et animation d’activités pour des groupes d’enfants'],
+  },
+];
+
+export const formations: Clip[] = [
+  {
+    id: 'cesi',
+    track: 'formation',
+    lane: 'V2',
+    title: 'Gestionnaire en maintenance et support informatique',
+    org: 'CESI',
+    place: 'Vandœuvre-lès-Nancy',
+    start: '2022-09',
+    end: '2024-08',
+    period: '2022 – 2024',
+    tag: 'Bac+2 obtenu',
+    points: ['Formation en alternance, en parallèle du poste au SIDSIC'],
+  },
+  {
+    id: 'psycho',
+    track: 'formation',
+    lane: 'V2',
+    title: 'Études de psychologie',
+    org: 'Université de Lorraine',
+    place: 'Nancy',
+    start: '2017-09',
+    end: '2021-06',
+    period: '2017 – 2021',
+    points: [
+      'Présidente de l’association LESPSY (400+ étudiants)',
+      'Représentante de promotion et de licence',
+    ],
+  },
+  {
+    id: 'bac',
+    track: 'formation',
+    lane: 'V2',
+    title: 'Baccalauréat santé et social',
+    org: 'Lycée Arthur Varoquaux',
+    place: 'Tomblaine',
+    start: '2014-09',
+    end: '2017-07',
+    period: '2014 – 2017',
+    tag: 'Obtenu',
+    points: [],
+  },
+];
+
+// Pistes "créa" : affichées sur la timeline, détaillées dans Projets et Hors champ
+export const creaClips: Clip[] = [
+  {
+    id: 'contenu',
+    track: 'crea',
+    lane: 'A1',
+    title: 'Création de contenu',
+    org: 'YouTube, TikTok, Twitch',
+    start: '2020-01',
+    end: null,
+    period: 'Depuis 2020',
+    points: [],
+  },
+  {
+    id: 'caritatif',
+    track: 'crea',
+    lane: 'A2',
+    title: 'Événements caritatifs gaming',
+    org: 'TTV Fest, Téléthon Gaming…',
+    start: '2021-01',
+    end: null,
+    period: 'Depuis 2021',
+    points: [],
+  },
+  {
+    id: 'miratopia',
+    track: 'crea',
+    lane: 'A3',
+    title: 'Miratopia',
+    org: 'Serveur Minecraft scénarisé',
+    start: '2022-01',
+    end: null,
+    period: 'Depuis 2022',
+    points: [],
+  },
+];
+
+export const timelineRange = { from: 2014, to: 2028 };
+
+export const lanes = [
+  { id: 'V1', label: 'Pro', track: 'pro' as Track },
+  { id: 'V2', label: 'Formation', track: 'formation' as Track },
+  { id: 'A1', label: 'Contenu', track: 'crea' as Track },
+  { id: 'A2', label: 'Caritatif', track: 'crea' as Track },
+  { id: 'A3', label: 'Miratopia', track: 'crea' as Track },
+];
+
+export const skills = [
+  {
+    group: 'Systèmes',
+    items: ['Windows', 'Windows Server', 'Debian / Linux', 'Active Directory', 'GPO', 'Proxmox, Hyper-V'],
+    where: 'SIDSIC',
+  },
+  {
+    group: 'Parc & déploiement',
+    items: ['GLPI', 'OCS Inventory', 'WAPT', 'Déploiement de postes', 'Gestion de tickets'],
+    where: 'SIDSIC',
+  },
+  {
+    group: 'Réseau',
+    items: ['TCP/IP', 'Câblage et brassage', 'Surveillance réseau', 'SSH'],
+    where: 'SIDSIC',
+  },
+  {
+    group: 'Scripts & outils',
+    items: ['PowerShell', 'Python', 'Git et GitHub', 'ffmpeg'],
+    where: 'SIDSIC, Video Toolbox',
+  },
+  {
+    group: 'Relation utilisateur',
+    items: ['Support téléphonique', 'Diagnostic à distance', 'Pédagogie', 'Analyse des besoins', 'Formation de techniciens'],
+    where: '2DCOM, SIDSIC',
+  },
+  {
+    group: 'Savoir-être',
+    items: ['Écoute', 'Rigueur', 'Autonomie', 'Gestion d’équipe', 'Organisation d’événements', 'Adaptabilité'],
+    where: 'LESPSY, Miratopia, événements caritatifs',
+  },
+];
+
+export const projects = [
+  {
+    id: 'video-toolbox',
+    name: 'Video Toolbox',
+    kind: 'Application de bureau',
+    year: '2026',
+    stack: ['Python', 'ffmpeg', 'NVENC', 'Tkinter'],
+    summary:
+      'Plus de 700 vieilles vidéos DivX que la télé refusait de lire. Plutôt que de les convertir à la main, j’ai écrit une application qui le fait proprement.',
+    points: [
+      'Analyse par glisser-déposer et verdict de compatibilité TV',
+      'Sept préréglages de conversion, accélération par la carte graphique avec repli automatique sur le processeur',
+      'Vérification d’intégrité avant de mettre l’original à la corbeille',
+      'Lots décrits en JSON, reprise après interruption',
+    ],
+    link: null as string | null,
+    linkLabel: 'Dépôt public bientôt',
+  },
+  {
+    id: 'miratopia',
+    name: 'Miratopia',
+    kind: 'Serveur Minecraft scénarisé',
+    year: 'Depuis 2022',
+    stack: ['Administration', 'Modération', 'Communauté'],
+    summary:
+      'Un projet monté avec des amis : un serveur Minecraft avec une vraie histoire, des personnages doublés et des quêtes. J’y gère l’administration, la modération et la vie de la communauté.',
+    points: [],
+    youtube: { id: 'nfwdT6BOSbM', title: 'Bande-annonce de Miratopia' },
+    link: null as string | null,
+    linkLabel: '',
+  },
+  {
+    id: 'caritatif',
+    name: 'Événements caritatifs gaming',
+    kind: 'Organisation',
+    year: 'Depuis 2021',
+    stack: ['Organisation', 'Animation', 'Live'],
+    summary:
+      'Des lives et des événements de jeu au profit d’associations : TTV Fest, Téléthon Gaming, Une semaine pour l’espoir, Arma des dons.',
+    points: [],
+    link: null as string | null,
+    linkLabel: '',
+  },
+];
+
+export const music = {
+  instruments: ['Chant', 'Guitare', 'Batterie'],
+  pillars: ['Jazz', 'Rock / Metal', 'Électro / Techno'],
+  text: 'Je chante depuis toute petite, et je joue de la guitare et de la batterie. Mes écoutes tournent autour de trois piliers, mais ma playlist dépasse les 3 600 titres et passe du classique aux BO de jeux. Je n’aime pas qu’on me range dans une case.',
+};
+
+export const games = {
+  favorites: ['Red Dead Redemption 2', 'Hunt: Showdown'],
+  others: [
+    'GTA',
+    'Dead by Daylight',
+    'The Wolf Among Us',
+    'Les jeux Telltale',
+    'Overwatch',
+    '007 First Light',
+    'Satisfactory',
+    'Age of Empires IV',
+    'Planet Zoo',
+  ],
+};
+
+export const sections = [
+  { id: 'parcours', label: 'Parcours' },
+  { id: 'competences', label: 'Compétences' },
+  { id: 'projets', label: 'Projets' },
+  { id: 'hors-champ', label: 'Hors champ' },
+  { id: 'contact', label: 'Contact' },
+];

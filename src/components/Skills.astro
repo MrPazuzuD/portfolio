@@ -1,0 +1,44 @@
+---
+import { skills } from '../data/cv';
+---
+<section class="section" id="competences" aria-labelledby="competences-title">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="mono marker">Marqueur 02 · Compétences</p>
+      <h2 id="competences-title">La boîte à outils</h2>
+      <p>Pas de jauges en pourcentage : chaque compétence vient d’un endroit où je l’ai pratiquée.</p>
+    </div>
+    <div class="grid">
+      {skills.map((g, i) => (
+        <article class="bin reveal" style={`--d:${i * 60}ms`}>
+          <header>
+            <h3>{g.group}</h3>
+            <span class="mono">{String(g.items.length).padStart(2, '0')} éléments</span>
+          </header>
+          <ul>{g.items.map((it) => <li>{it}</li>)}</ul>
+          <p class="where mono">Pratiqué : {g.where}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .bin {
+    display: grid; grid-template-rows: auto 1fr auto; gap: 1rem; padding: 1.4rem;
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    transition-delay: var(--d);
+  }
+  .bin header { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+  .bin h3 { font-size: 1.2rem; }
+  .bin header .mono { font-size: .65rem; }
+  .bin ul { list-style: none; display: flex; flex-wrap: wrap; gap: .45rem; align-content: start; }
+  .bin li {
+    font-size: .88rem; padding: .3rem .7rem; border-radius: 8px;
+    background: var(--panel-2); border: 1px solid var(--line);
+  }
+  .where { font-size: .66rem; text-transform: none; letter-spacing: .02em; border-top: 1px dashed var(--line); padding-top: .8rem; }
+  @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+</style>

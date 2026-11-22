@@ -1,0 +1,105 @@
+---
+import { music, games, profile } from '../data/cv';
+import Icon from './Icon.astro';
+
+// Forme d'onde décorative, générée une fois pour toutes (pas d'aléatoire au chargement)
+const bars = Array.from({ length: 72 }, (_, i) => {
+  const v = Math.abs(Math.sin(i * 0.55) * 0.6 + Math.sin(i * 0.17 + 1) * 0.35 + Math.sin(i * 1.7) * 0.15);
+  return Math.round(18 + v * 82);
+});
+---
+<section class="section" id="hors-champ" aria-labelledby="hc-title">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="mono marker">Marqueur 04 · Hors champ</p>
+      <h2 id="hc-title">Ce qui ne rentre pas dans une fiche de poste</h2>
+      <p>La musique, le montage et le jeu vidéo. C’est de là que vient la forme de ce site.</p>
+    </div>
+
+    <div class="bento">
+      <article class="tile tile--music reveal">
+        <p class="mono tile__k">A1 · Musique</p>
+        <div class="deck">
+          <button class="deck__play" type="button" aria-pressed="false" data-wave-toggle>
+            <Icon name="play" /><span class="sr-only">Animer la forme d’onde</span>
+          </button>
+          <div>
+            <p class="deck__now">{music.instruments.join(' · ')}</p>
+            <p class="mono">Piste en boucle depuis l’enfance</p>
+          </div>
+        </div>
+        <div class="wave" aria-hidden="true" data-wave>
+          {bars.map((h, i) => <span style={`--h:${h}%;--i:${i}`}></span>)}
+        </div>
+        <p class="tile__text">{music.text}</p>
+        <ul class="chips">{music.pillars.map((p) => <li>{p}</li>)}</ul>
+      </article>
+
+      <article class="tile tile--edit reveal">
+        <p class="mono tile__k">V3 · Montage & stream</p>
+        <h3>Je monte depuis 2020</h3>
+        <p class="tile__text">Vidéos YouTube et TikTok, lives Twitch, modération et serveurs Discord. Couper, rythmer, raconter : c’est le même réflexe que pour expliquer un logiciel à quelqu’un.</p>
+        <a class="btn" href={profile.links.twitch} target="_blank" rel="noopener"><Icon name="twitch" />pazuzuuu_ sur Twitch</a>
+      </article>
+
+      <article class="tile tile--games reveal">
+        <p class="mono tile__k">Chutier · Jeux vidéo</p>
+        <h3>Mes rushs préférés</h3>
+        <ul class="rushes">
+          {games.favorites.map((g) => <li class="rush rush--fav"><span class="mono">★ Favori</span>{g}</li>)}
+          {games.others.map((g) => <li class="rush">{g}</li>)}
+          <li class="rush rush--more">Et plein d’autres…</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bento { display: grid; grid-template-columns: 1.3fr 1fr; gap: 1rem; }
+  .tile {
+    display: grid; gap: 1.1rem; align-content: start; padding: clamp(1.4rem, 3vw, 2rem);
+    background: var(--panel); border: 1px solid var(--line); border-radius: 20px;
+  }
+  .tile--music { grid-row: span 2;
+    background: radial-gradient(600px 300px at 100% 0, color-mix(in srgb, var(--crea) 20%, transparent), transparent 70%), var(--panel); }
+  .tile__k { color: var(--crea); font-size: .7rem; }
+  .tile h3 { font-size: 1.6rem; }
+  .tile__text { color: #d5d9e2; }
+
+  .deck { display: flex; align-items: center; gap: 1rem; }
+  .deck__now { font-family: var(--font-title); font-weight: 600; font-size: 1.35rem; }
+  .deck__play {
+    width: 54px; height: 54px; border-radius: 50%; border: 0; cursor: pointer; flex: none;
+    display: grid; place-items: center; background: var(--crea); color: #120d22;
+  }
+  .deck__play :global(svg) { width: 22px; height: 22px; margin-left: 3px; }
+  .deck__play[aria-pressed='true'] { background: var(--gold); }
+
+  .wave { display: flex; align-items: center; gap: 3px; height: 110px; }
+  .wave span {
+    flex: 1; height: var(--h); border-radius: 2px;
+    background: linear-gradient(var(--crea), color-mix(in srgb, var(--crea) 30%, var(--pro)));
+    opacity: .85; transform-origin: center;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .wave.is-playing span { animation: bounce 1.1s ease-in-out infinite alternate; animation-delay: calc(var(--i) * -37ms); }
+    @keyframes bounce { from { transform: scaleY(.35); } to { transform: scaleY(1); } }
+  }
+
+  .chips { list-style: none; display: flex; flex-wrap: wrap; gap: .5rem; }
+  .chips li { padding: .4rem .9rem; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--crea) 50%, var(--line)); font-weight: 600; font-size: .92rem; }
+
+  .tile--edit .btn { justify-self: start; }
+
+  .rushes { list-style: none; display: flex; flex-wrap: wrap; gap: .45rem; }
+  .rush {
+    font-size: .9rem; padding: .35rem .75rem; border-radius: 6px;
+    background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--pro);
+  }
+  .rush--fav { display: grid; border-left-color: var(--gold); background: color-mix(in srgb, var(--gold) 10%, var(--panel-2)); font-weight: 600; }
+  .rush--fav .mono { font-size: .58rem; color: var(--gold); }
+  .rush--more { border-left-color: var(--muted); color: var(--muted); }
+
+  @media (max-width: 860px) { .bento { grid-template-columns: 1fr; } .tile--music { grid-row: auto; } }
+</style>

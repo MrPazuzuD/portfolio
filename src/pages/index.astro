@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Monitor from '../components/Monitor.astro';
+import Timeline from '../components/Timeline.astro';
+import Skills from '../components/Skills.astro';
+import Projects from '../components/Projects.astro';
+import HorsChamp from '../components/HorsChamp.astro';
+import Contact from '../components/Contact.astro';
+import { profile } from '../data/cv';
+---
+<Base
+  title={`${profile.firstName} ${profile.lastName} · ${profile.title}`}
+  description={`${profile.title} à ${profile.location}. Parcours, compétences, projets, et tout ce qui se passe hors champ : musique, montage et jeux vidéo.`}
+>
+  <a class="skip" href="#main">Aller au contenu</a>
+  <Header />
+  <main id="main">
+    <Monitor />
+    <Timeline />
+    <Skills />
+    <Projects />
+    <HorsChamp />
+    <Contact />
+  </main>
+  <script src="../scripts/main.ts"></script>
+</Base>

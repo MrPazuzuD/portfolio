@@ -1,0 +1,55 @@
+---
+import { profile } from '../data/cv';
+import Icon from './Icon.astro';
+---
+<section class="section contact" id="contact" aria-labelledby="contact-title">
+  <div class="wrap">
+    <div class="box reveal">
+      <p class="mono marker">Marqueur 05 · Contact</p>
+      <h2 id="contact-title">On en parle ?</h2>
+      <p class="lead">Le plus simple pour me joindre, c’est LinkedIn.</p>
+      <div class="cta">
+        <a class="btn btn--gold" href={profile.links.linkedin} target="_blank" rel="me noopener"><Icon name="linkedin" />Me contacter sur LinkedIn</a>
+        <a class="btn" href={profile.links.github} target="_blank" rel="me noopener"><Icon name="github" />GitHub</a>
+        <a class="btn" href={profile.cvPdf} download><Icon name="download" />CV en PDF</a>
+        {profile.email && <a class="btn" href={`mailto:${profile.email}`}><Icon name="mail" />{profile.email}</a>}
+      </div>
+      <p class="loc mono"><Icon name="pin" />{profile.location}</p>
+    </div>
+  </div>
+</section>
+
+<footer class="credits">
+  <div class="wrap credits__inner mono">
+    <p>Fin de lecture · 00:02:00:00</p>
+    <dl>
+      <div><dt>Réalisation</dt><dd>{profile.firstName} {profile.lastName}</dd></div>
+      <div><dt>Montage</dt><dd>{profile.firstName} {profile.lastName}</dd></div>
+      <div><dt>Code</dt><dd>Astro, avec l’aide de Claude (IA)</dd></div>
+    </dl>
+    <p>© {new Date().getFullYear()}</p>
+  </div>
+</footer>
+
+<style>
+  .box {
+    display: grid; gap: 1.1rem; justify-items: start; padding: clamp(2rem, 6vw, 4.5rem);
+    border-radius: 24px; border: 1px solid var(--line);
+    background:
+      radial-gradient(700px 300px at 100% 100%, color-mix(in srgb, var(--gold) 18%, transparent), transparent 70%),
+      var(--panel);
+  }
+  .box h2 { font-size: clamp(2.4rem, 6vw, 4.5rem); }
+  .lead { color: #d5d9e2; font-size: 1.15rem; }
+  .cta { display: flex; flex-wrap: wrap; gap: .7rem; }
+  .loc { display: flex; align-items: center; gap: .4rem; text-transform: none; }
+  .loc :global(svg) { width: 14px; height: 14px; }
+
+  .credits { border-top: 1px solid var(--line); padding: 2.5rem 0 3rem; }
+  .credits__inner { display: grid; gap: 1.2rem; justify-items: center; text-align: center; font-size: .68rem; }
+  .credits dl { margin: 0; display: grid; gap: .5rem; }
+  .credits dl div { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .credits dt { text-align: right; }
+  .credits dd { margin: 0; text-align: left; color: var(--text); text-transform: none; }
+  @media (max-width: 600px) { .cta .btn { flex: 1 1 100%; justify-content: center; } }
+</style>

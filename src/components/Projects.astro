@@ -1,0 +1,82 @@
+---
+import { projects } from '../data/cv';
+import Icon from './Icon.astro';
+---
+<section class="section" id="projets" aria-labelledby="projets-title">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="mono marker">Marqueur 03 · Projets</p>
+      <h2 id="projets-title">Ce que je fabrique</h2>
+      <p>Des projets nés d’un vrai besoin ou d’une bande de copains.</p>
+    </div>
+
+    <div class="list">
+      {projects.map((p, i) => (
+        <article class={`proj reveal ${p.youtube ? 'proj--video' : ''}`} id={`projet-${p.id}`}>
+          <div class="proj__text">
+            <p class="mono proj__meta"><span>{String(i + 1).padStart(2, '0')}</span>{p.kind} · {p.year}</p>
+            <h3>{p.name}</h3>
+            <p class="proj__sum">{p.summary}</p>
+            {p.points.length > 0 && <ul>{p.points.map((x) => <li>{x}</li>)}</ul>}
+            <ul class="stack">{p.stack.map((s) => <li class="mono">{s}</li>)}</ul>
+            {p.link ? (
+              <a class="btn" href={p.link} target="_blank" rel="noopener">{p.linkLabel}<Icon name="arrow" /></a>
+            ) : p.linkLabel && <p class="soon mono">{p.linkLabel}</p>}
+          </div>
+          {p.youtube && (
+            <div class="player" data-yt={p.youtube.id}>
+              <a class="player__facade" href={`https://www.youtube.com/watch?v=${p.youtube.id}`} target="_blank" rel="noopener">
+                <span class="player__title">{p.name}</span>
+                <span class="player__btn"><Icon name="play" /></span>
+                <span class="player__label mono">Lire la bande-annonce</span>
+                <span class="sr-only">{p.youtube.title} (YouTube)</span>
+              </a>
+              <p class="player__note mono">La vidéo se charge depuis YouTube au clic.</p>
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .list { display: grid; gap: 1.2rem; }
+  .proj {
+    display: grid; gap: 2rem; padding: clamp(1.4rem, 3vw, 2.2rem);
+    background: var(--panel); border: 1px solid var(--line); border-radius: 20px; scroll-margin-top: 100px;
+  }
+  .proj--video { grid-template-columns: 1fr 1.15fr; align-items: center; }
+  .proj__meta { display: flex; gap: .8rem; font-size: .7rem; }
+  .proj__meta span { color: var(--gold); }
+  .proj h3 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin: .4rem 0 .8rem; }
+  .proj__sum { color: #d5d9e2; max-width: 62ch; }
+  .proj__text > ul:not(.stack) { margin-top: 1rem; padding-left: 1.1rem; display: grid; gap: .35rem; color: #c9cedb; font-size: .96rem; }
+  .stack { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem; margin: 1.2rem 0; }
+  .stack li { font-size: .66rem; padding: .25rem .6rem; border: 1px solid var(--line); border-radius: 999px; color: var(--text); }
+  .soon { color: var(--gold); font-size: .7rem; }
+
+  .player { display: grid; gap: .6rem; }
+  .player__facade, .player :global(iframe) {
+    position: relative; display: grid; place-items: center; aspect-ratio: 16 / 9; width: 100%;
+    border-radius: 14px; border: 1px solid var(--line); overflow: hidden; text-decoration: none;
+  }
+  .player__facade {
+    background:
+      radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--crea) 45%, transparent), transparent 55%),
+      radial-gradient(circle at 80% 80%, color-mix(in srgb, var(--pro) 35%, transparent), transparent 55%),
+      repeating-linear-gradient(0deg, #ffffff06 0 2px, transparent 2px 4px),
+      #10131c;
+  }
+  .player__title { position: absolute; left: 1.2rem; bottom: 1rem; font-family: var(--font-title); font-weight: 700; font-size: clamp(1.4rem, 3vw, 2.2rem); }
+  .player__label { position: absolute; right: 1.2rem; top: 1rem; font-size: .65rem; }
+  .player__btn {
+    width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--gold); color: #14110a; transition: transform .25s ease;
+    box-shadow: 0 0 0 10px color-mix(in srgb, var(--gold) 18%, transparent);
+  }
+  .player__btn :global(svg) { width: 30px; height: 30px; margin-left: 4px; }
+  .player__facade:hover .player__btn { transform: scale(1.08); }
+  .player__note { font-size: .62rem; text-transform: none; }
+  @media (max-width: 860px) { .proj--video { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,135 @@
+---
+import { experiences, formations, creaClips, lanes, timelineRange, type Clip } from '../data/cv';
+
+const total = (timelineRange.to - timelineRange.from) * 12;
+const now = new Date();
+const toMonths = (d: string | null) => {
+  if (!d) return (now.getFullYear() - timelineRange.from) * 12 + now.getMonth() + 1;
+  const [y, m] = d.split('-').map(Number);
+  return (y - timelineRange.from) * 12 + (m - 1);
+};
+const pos = (c: Clip) => {
+  const s = toMonths(c.start);
+  // Un clip en cours s'étire jusqu'au bord de la timeline, en fondu
+  const e = c.end ? toMonths(c.end) : total;
+  return `left:${(s / total) * 100}%;width:${(Math.max(e - s, 4) / total) * 100}%`;
+};
+const all = [...experiences, ...formations, ...creaClips];
+const years = Array.from({ length: timelineRange.to - timelineRange.from + 1 }, (_, i) => timelineRange.from + i);
+const nowPct = (toMonths(null) / total);
+// Les clips créa renvoient vers les sections Projets / Hors champ
+const hrefFor = (c: Clip) => (c.track === 'crea' ? (c.id === 'contenu' ? '#hors-champ' : `#projet-${c.id}`) : `#clip-${c.id}`);
+---
+<section class="section" id="parcours" aria-labelledby="parcours-title">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="mono marker">Marqueur 01 · Parcours</p>
+      <h2 id="parcours-title">La timeline</h2>
+      <p>Chaque piste raconte une partie de mon parcours. Cliquez sur un clip pour l’ouvrir.</p>
+    </div>
+
+    <div class="tl reveal" aria-hidden="true">
+      <div class="tl__scroll">
+        <div class="tl__grid">
+          <div class="tl__years">
+            {years.map((y, i) => <span style={`left:${(i * 12 / total) * 100}%`}>{y}</span>)}
+          </div>
+          {lanes.map((l) => (
+            <div class={`tl__lane tl__lane--${l.track}`}>
+              <span class="tl__label mono"><b>{l.id}</b>{l.label}</span>
+              <div class="tl__track">
+                {all.filter((c) => c.lane === l.id).map((c) => (
+                  <a class={`clip clip--${c.track} ${c.end ? '' : 'clip--live'}`} href={hrefFor(c)} style={pos(c)} tabindex="-1" title={`${c.title} · ${c.org}`}>
+                    <span>{c.org}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div class="tl__now" style={`--x:${nowPct}`}><span class="mono">Aujourd’hui</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cols">
+      {[{ title: 'Expériences', list: experiences }, { title: 'Formations', list: formations }].map((col) => (
+        <div>
+          <h3 class="col-title mono">{col.title}</h3>
+          <ol class="cards">
+            {col.list.map((c) => (
+              <li class={`card card--${c.track} reveal`} id={`clip-${c.id}`}>
+                <div class="card__meta mono">
+                  <span>{c.period}</span>
+                  {c.tag && <span class="tag">{c.tag}</span>}
+                </div>
+                <h4>{c.title}</h4>
+                <p class="card__org">{c.org}{c.place && <span> · {c.place}</span>}</p>
+                {c.points.length > 0 && (
+                  <ul>{c.points.map((p) => <li>{p}</li>)}</ul>
+                )}
+              </li>
+            ))}
+          </ol>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .tl { border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-2); margin-bottom: 3rem; overflow: hidden; }
+  .tl__scroll { overflow-x: auto; }
+  .tl__grid { position: relative; min-width: 720px; padding: 0 1rem 1rem 0; }
+  .tl__years { position: relative; height: 34px; margin-left: 120px; border-bottom: 1px solid var(--line); }
+  .tl__years span {
+    position: absolute; top: 10px; font-family: var(--font-mono); font-size: .7rem; color: var(--muted);
+    padding-left: 6px; border-left: 1px solid var(--line); height: 24px;
+  }
+  .tl__lane { display: flex; align-items: center; height: 42px; border-bottom: 1px solid #ffffff08; }
+  .tl__label {
+    width: 120px; flex: none; padding-left: 1rem; display: flex; gap: .6rem; font-size: .68rem;
+  }
+  .tl__label b { color: var(--text); font-weight: 600; }
+  .tl__track { position: relative; flex: 1; height: 28px; }
+  .clip {
+    position: absolute; top: 0; bottom: 0; border-radius: 6px; overflow: hidden;
+    display: flex; align-items: center; padding: 0 .5rem; text-decoration: none;
+    font-size: .72rem; font-weight: 600; white-space: nowrap; color: #0b0d13;
+    transition: filter .2s, transform .2s;
+  }
+  .clip span { overflow: hidden; text-overflow: ellipsis; }
+  .clip--live { -webkit-mask: linear-gradient(90deg, #000 85%, #0000); mask: linear-gradient(90deg, #000 85%, #0000); }
+  .clip--crea span { background: #1a1530; padding: 0 .35rem; border-radius: 4px; }
+  .clip:hover { filter: brightness(1.15); transform: translateY(-1px); }
+  .clip--pro { background: var(--pro); }
+  .clip--formation { background: var(--formation); }
+  .clip--crea {
+    background: color-mix(in srgb, var(--crea) 35%, #1a1530); color: var(--text);
+    border: 1px solid var(--crea);
+    /* motif de forme d'onde pour les pistes "audio" */
+    background-image: repeating-linear-gradient(90deg, color-mix(in srgb, var(--crea) 55%, transparent) 0 2px, transparent 2px 5px);
+    background-size: 100% 40%; background-position: center; background-repeat: no-repeat;
+  }
+  .tl__now { position: absolute; top: 0; bottom: 0; left: calc(120px + (100% - 120px - 1rem) * var(--x)); width: 2px; background: var(--rec); }
+  .tl__now span { position: absolute; top: 2px; right: 6px; color: var(--rec); font-size: .62rem; white-space: nowrap; }
+
+  .cols { display: grid; grid-template-columns: 1.25fr 1fr; gap: 2.5rem; }
+  .col-title { margin-bottom: 1rem; }
+  .cards { list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem; }
+  .card {
+    position: relative; padding: 1.3rem 1.4rem 1.3rem 1.6rem; background: var(--panel);
+    border: 1px solid var(--line); border-radius: var(--radius); scroll-margin-top: 100px;
+  }
+  .card::before { content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 3px; border-radius: 0 3px 3px 0; }
+  .card--pro::before { background: var(--pro); }
+  .card--formation::before { background: var(--formation); }
+  .card:target { border-color: var(--gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 25%, transparent); }
+  .card__meta { display: flex; justify-content: space-between; gap: 1rem; margin-bottom: .5rem; font-size: .72rem; }
+  .tag { color: var(--text); border: 1px solid var(--line); border-radius: 999px; padding: .05rem .55rem; text-transform: none; }
+  .card h4 { font-family: var(--font-title); font-size: 1.2rem; line-height: 1.25; }
+  .card__org { color: var(--muted); font-size: .95rem; margin-top: .2rem; }
+  .card ul { margin-top: .8rem; padding-left: 1.1rem; display: grid; gap: .35rem; font-size: .96rem; color: #d5d9e2; }
+  .card li::marker { color: var(--muted); }
+
+  @media (max-width: 860px) { .cols { grid-template-columns: 1fr; } }
+</style>
