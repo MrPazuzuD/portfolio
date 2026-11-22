@@ -352,8 +352,8 @@ export const games = [
   { name: 'Cyberpunk 2077', cover: '/games/cyberpunk.webp', fav: true },
   { name: 'Satisfactory', cover: '/games/satisfactory.webp' },
   { name: 'Subnautica 2', cover: '/games/subnautica2.webp' },
-  // Jaquette recadrée sans l'ancien logo « Overwatch 2 » : le titre est affiché en permanence
-  { name: 'Overwatch', cover: '/games/overwatch.webp', showTitle: true },
+  // Jaquette recadrée sans l'ancien logo « Overwatch 2 », nom ajouté dans l'image
+  { name: 'Overwatch', cover: '/games/overwatch.webp' },
   { name: 'Dead by Daylight', cover: '/games/dbd.webp' },
   { name: 'Rust', cover: '/games/rust.webp' },
   { name: 'ARC Raiders', cover: '/games/arc.webp' },
