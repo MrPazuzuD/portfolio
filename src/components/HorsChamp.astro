@@ -62,9 +62,9 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
             )))}
           </div>
         </div>
-        <p class="txt">Vidéos YouTube et TikTok, lives Twitch, modération et serveurs Discord. Couper, rythmer, raconter : c’est le même réflexe que pour expliquer un logiciel à quelqu’un.</p>
+        <p class="txt">L’essentiel de mon montage, je le fais pour la chaîne YouTube de TacxTV, dont les bandes-annonces de Miratopia. À côté : TikTok, lives Twitch, modération et serveurs Discord. Couper, rythmer, raconter : c’est le même réflexe que pour expliquer un logiciel à quelqu’un.</p>
         <div class="row">
-          <a class="btn" href={profile.links.youtube} target="_blank" rel="noopener"><Icon name="play" />YouTube</a>
+          {profile.links.tacxtv && <a class="btn" href={profile.links.tacxtv} target="_blank" rel="noopener"><Icon name="play" />TacxTV sur YouTube</a>}
           <a class="btn" href={profile.links.twitch} target="_blank" rel="noopener"><Icon name="twitch" />Twitch</a>
         </div>
       </article>

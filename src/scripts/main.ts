@@ -212,6 +212,18 @@ gameBtns.forEach((b, i) => {
   });
 });
 
+// 11 bis. Agrandir une capture
+const zoomDlg = document.querySelector<HTMLDialogElement>('[data-zoom-dialog]');
+document.querySelectorAll<HTMLElement>('[data-zoom-img]').forEach((b) => b.addEventListener('click', () => {
+  if (!zoomDlg) return;
+  const img = zoomDlg.querySelector<HTMLImageElement>('[data-zoom-target]')!;
+  img.src = b.querySelector('img')?.getAttribute('src') ?? b.dataset.zoomImg!;
+  img.alt = b.querySelector('img')?.alt ?? '';
+  zoomDlg.showModal();
+}));
+zoomDlg?.querySelector('[data-zoom-close]')?.addEventListener('click', () => zoomDlg.close());
+zoomDlg?.addEventListener('click', (e) => { if (e.target === zoomDlg) zoomDlg.close(); });
+
 // 12. Liens suivis
 document.addEventListener('click', (e) => {
   const a = (e.target as HTMLElement).closest('a');

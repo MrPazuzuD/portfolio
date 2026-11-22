@@ -3,12 +3,6 @@ import { projects } from '../data/cv';
 import Icon from './Icon.astro';
 import SectionHead from './SectionHead.astro';
 
-const files = [
-  { n: 'vacances_1998.avi', c: 'DivX → H.264', s: 'ok' },
-  { n: 'anniversaire.avi', c: 'Xvid → H.264', s: 'run' },
-  { n: 'mariage_2004.mkv', c: 'MPEG-4 → H.264', s: 'wait' },
-  { n: 'dessin_anime.avi', c: 'DivX → H.264', s: 'wait' },
-];
 const chat = [
   { u: 'viewer_42', c: '#7ec8ff', m: 'GG pour le palier des 500 € !' },
   { u: 'pazuzuuu_', c: '#a98bff', m: 'Merci à tous, on continue 💜', mod: true },
@@ -39,21 +33,13 @@ const chat = [
 
           <div class="visual">
             {p.id === 'video-toolbox' && (
-              <div class="vt tilt" aria-hidden="true">
-                <div class="vt__bar"><span class="dots"><i></i><i></i><i></i></span><b>Video Toolbox</b><span class="vt__gpu mono">GPU · NVENC</span></div>
-                <div class="vt__drop mono">Glissez vos vidéos ici</div>
-                <ul class="vt__files">
-                  {files.map((f) => (
-                    <li class={`vt__row is-${f.s}`}>
-                      <span class="vt__name">{f.n}</span>
-                      <span class="mono vt__codec">{f.c}</span>
-                      <span class="vt__state mono">{f.s === 'ok' ? '✓ Vérifié' : f.s === 'run' ? 'Conversion' : 'En attente'}</span>
-                      {f.s === 'run' && <span class="vt__prog"><i></i></span>}
-                    </li>
-                  ))}
-                </ul>
-                <div class="vt__foot mono"><span>722 fichiers analysés</span><span>Intégrité vérifiée avant corbeille</span></div>
-              </div>
+              <figure class="shot">
+                <button type="button" class="shot__win tilt" data-zoom-img="/video-toolbox.webp" aria-label="Agrandir la capture de Video Toolbox">
+                  <span class="shot__bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span><b>Video Toolbox</b><span class="mono">Agrandir ⤢</span></span>
+                  <img src="/video-toolbox.webp" alt="Capture de Video Toolbox : liste de vidéos analysées avec leur verdict de compatibilité TV, réglages de conversion et conversion en cours" width="1440" height="820" loading="lazy" decoding="async" />
+                </button>
+                <figcaption class="mono">Vraie capture de l’application, prise sur une machine de test sans carte graphique (d’où « GPU : non disponible »).</figcaption>
+              </figure>
             )}
 
             {'youtube' in p && p.youtube && (
@@ -93,6 +79,10 @@ const chat = [
       ))}
     </div>
   </div>
+  <dialog class="zoom" data-zoom-dialog aria-label="Capture agrandie">
+    <button type="button" class="zoom__close" data-zoom-close aria-label="Fermer">✕</button>
+    <img alt="" data-zoom-target />
+  </dialog>
 </section>
 
 <style>
@@ -116,24 +106,23 @@ const chat = [
   .dots i:nth-child(2) { background: #febc2e; }
   .dots i:nth-child(3) { background: #28c840; }
 
-  /* Fenêtre Video Toolbox */
-  .vt { border-radius: 14px; overflow: hidden; background: #f4f5f8; color: #1c2230; border: 1px solid #000;
-    box-shadow: 0 30px 70px -20px rgb(0 0 0 / .8), 0 0 0 1px rgb(255 255 255 / .08); font-size: .82rem; }
-  .vt__bar { display: flex; align-items: center; gap: .8rem; padding: .55rem .8rem; background: linear-gradient(#e9ebf0, #dcdfe6); border-bottom: 1px solid #c6cad4; }
-  .vt__bar b { font-family: var(--font-title); font-size: .85rem; }
-  .vt__gpu { margin-left: auto; font-size: .58rem; padding: .15rem .45rem; border-radius: 5px; background: #76b900; color: #fff; }
-  .vt__drop { margin: .8rem; padding: .9rem; border: 2px dashed #b7bdca; border-radius: 10px; text-align: center; font-size: .62rem; color: #6b7385; }
-  .vt__files { list-style: none; margin: 0 .8rem; display: grid; gap: .35rem; }
-  .vt__row { position: relative; display: grid; grid-template-columns: 1fr auto auto; gap: .8rem; align-items: center;
-    padding: .55rem .7rem; background: #fff; border: 1px solid #e1e4eb; border-radius: 8px; overflow: hidden; }
-  .vt__name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .vt__codec { font-size: .58rem; color: #6b7385; text-transform: none; }
-  .vt__state { font-size: .58rem; padding: .15rem .45rem; border-radius: 5px; background: #eef0f4; color: #6b7385; }
-  .is-ok .vt__state { background: #dff6e7; color: #1b7a3d; }
-  .is-run .vt__state { background: #fff3d1; color: #8a6200; }
-  .vt__prog { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: #e9ecf2; }
-  .vt__prog i { display: block; height: 100%; width: 64%; background: linear-gradient(90deg, #f2b705, #ff9d00); }
-  .vt__foot { display: flex; justify-content: space-between; gap: 1rem; padding: .8rem; font-size: .55rem; color: #6b7385; text-transform: none; }
+  /* Capture Video Toolbox */
+  .shot { margin: 0; display: grid; gap: .6rem; }
+  .shot__win {
+    all: unset; box-sizing: border-box; cursor: zoom-in; display: block; border-radius: 12px; overflow: hidden; background: #1e1e1e;
+    border: 1px solid #000; box-shadow: 0 30px 70px -20px rgb(0 0 0 / .8), 0 0 0 1px rgb(255 255 255 / .08);
+  }
+  .shot__win:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  .shot__bar { display: flex; align-items: center; gap: .8rem; padding: .5rem .8rem; background: linear-gradient(#3a3d44, #2d3036); border-bottom: 1px solid #000; font-size: .8rem; }
+  .shot__bar b { font-family: var(--font-title); font-weight: 600; }
+  .shot__bar .mono { margin-left: auto; font-size: .6rem; }
+  .shot img { width: 100%; height: auto; }
+  .shot figcaption { font-size: .6rem; text-transform: none; }
+
+  .zoom { padding: 0; border: 0; background: transparent; max-width: 96vw; max-height: 94vh; overflow: visible; }
+  .zoom::backdrop { background: rgb(5 7 12 / .85); backdrop-filter: blur(4px); }
+  .zoom img { display: block; max-width: 96vw; max-height: 94vh; border-radius: 10px; box-shadow: 0 40px 120px #000; }
+  .zoom__close { position: absolute; top: -14px; right: -14px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel-2); color: var(--text); cursor: pointer; }
 
   /* Lecteur Miratopia */
   .player { display: grid; gap: .6rem; }
