@@ -16,6 +16,8 @@ export interface Clip {
   /** Format AAAA-MM. `end: null` = en cours */
   start: string;
   end: string | null;
+  /** Durée écrite à la main quand le calcul au mois près serait trompeur (passages courts) */
+  dur?: string;
   /** Autres passages au même poste, affichés comme clips séparés sur la timeline */
   more?: { start: string; end: string }[];
   /** Texte affiché pour les dates (le CV n'a parfois que les années) */
@@ -112,6 +114,7 @@ export const experiences: Clip[] = [
     start: '2018-07',
     end: '2018-08',
     more: [{ start: '2026-08', end: '2026-09' }],
+    dur: 'Environ 2 mois (2 passages)',
     period: 'Août – sept. 2026 · juil. 2018',
     tag: 'Saisonnier',
     points: ['Préparation et expédition des commandes'],

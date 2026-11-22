@@ -26,7 +26,16 @@ const nowPct = toMonths(null) / total;
 const hrefFor = (c: Clip) => (c.track === 'crea' ? (c.id === 'contenu' ? '#hors-champ' : `#projet-${c.id}`) : `#clip-${c.id}`);
 const first = experiences[0];
 // Données de l'inspecteur, lues par le script
-const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org, p: c.place ?? '', d: c.period, g: c.tag ?? '', pts: c.points, since: c.end ? '' : c.start }]));
+const laneLabel = Object.fromEntries(lanes.map((l) => [l.id, `${l.id} · ${l.label}`]));
+// Durée d'un clip en mois (tous ses passages additionnés) ; recalculée par le script à la date du visiteur
+const segMonths = (s: string, e: string | null) => Math.max(1, toMonths(e) - toMonths(s) + (e ? 1 : 0));
+const durOf = (c: Clip) => [{ start: c.start, end: c.end }, ...(c.more ?? [])].reduce((n, x) => n + segMonths(x.start, x.end), 0);
+const fmtDur = (n: number) => { const a = Math.floor(n / 12), m = n % 12; return [a ? `${a} an${a > 1 ? 's' : ''}` : '', m ? `${m} mois` : ''].filter(Boolean).join(' '); };
+const inspect = Object.fromEntries(all.map((c) => [c.id, {
+  t: c.title, o: c.org, sh: c.short ?? c.org, dur: c.dur ?? '', p: c.place ?? '', d: c.period, g: c.tag ?? '', pts: c.points, k: c.track, lane: laneLabel[c.lane],
+  segs: [{ s: c.start, e: c.end }, ...(c.more ?? []).map((m) => ({ s: m.start, e: m.end }))],
+}]));
+const order = [...experiences, ...formations].map((c) => c.id);
 ---
 <section class="section" id="parcours" aria-labelledby="parcours-title">
   <div class="wrap">
@@ -80,18 +89,37 @@ const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org,
         </div>
       </div>
 
-      <div class="insp" data-insp aria-live="polite">
-        <p class="mono insp__k">Inspecteur</p>
+      <div class="insp" data-insp data-k={first.track} aria-live="polite">
+        <div class="insp__bar mono">
+          <span class="insp__k">Inspecteur</span>
+          <span class="insp__chip" data-i="lane">{laneLabel[first.lane]}</span>
+          <span class="insp__nav">
+            <button type="button" data-insp-step="-1" aria-label="Clip précédent">◀</button>
+            <span data-i="pos">1 / {order.length}</span>
+            <button type="button" data-insp-step="1" aria-label="Clip suivant">▶</button>
+          </span>
+        </div>
         <div class="insp__body">
-          <div>
-            <p class="mono insp__meta"><span data-i="d" data-since={first.end ? undefined : first.start}>{first.period}</span><span class={`tag ${first.tag && /obtenu/i.test(first.tag) ? 'tag--ok' : ''}`} data-i="g">{first.tag}</span></p>
-            <h3 data-i="t">{first.title}</h3>
-            <p class="insp__org" data-i="o">{first.org} · {first.place}</p>
+          <div class="insp__id">
+            <span class="insp__thumb" data-i="thumb" aria-hidden="true">{(first.short ?? first.org).slice(0, 1)}</span>
+            <div>
+              <h3 data-i="t">{first.title}</h3>
+              <p class="insp__org" data-i="o">{first.org}</p>
+            </div>
           </div>
-          <ul data-i="pts">{first.points.map((p) => <li>{p}</li>)}</ul>
+          <dl class="insp__props mono">
+            <div><dt>Période</dt><dd data-i="d">{first.period}</dd></div>
+            <div><dt>Durée</dt><dd data-i="dur">{first.dur ?? (first.track === 'formation' ? `${Math.round(durOf(first) / 12)} ans` : fmtDur(durOf(first)))}</dd></div>
+            <div><dt>Lieu</dt><dd data-i="p">{first.place ?? '—'}</dd></div>
+            <div><dt>Statut</dt><dd><span class={`tag ${first.tag && /obtenu/i.test(first.tag) ? 'tag--ok' : ''}`} data-i="g">{first.tag}</span></dd></div>
+          </dl>
+          <div class="insp__pts" data-i="ptsbox">
+            <p class="mono insp__ptk" data-i="ptk">Missions</p>
+            <ul data-i="pts">{first.points.map((p) => <li>{p}</li>)}</ul>
+          </div>
         </div>
       </div>
-      <script type="application/json" data-insp-data set:html={JSON.stringify(inspect)} />
+      <script type="application/json" data-insp-data set:html={JSON.stringify({ clips: inspect, order })} />
     </div>
 
     <div class="cols">
@@ -210,14 +238,37 @@ const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org,
   .tl__hover span { position: absolute; top: 3px; left: 6px; font-size: .6rem; color: #fff; white-space: nowrap; background: #000a; padding: 0 .3rem; border-radius: 3px; }
   .tl__hover.is-on { opacity: 1; }
 
-  .insp { border-top: 1px solid #000; padding: 1.2rem 1.4rem 1.4rem; background: linear-gradient(#171c28, #131722); }
-  .insp__k { font-size: .62rem; color: var(--gold); margin-bottom: .7rem; }
-  .insp__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 1.5rem; align-items: start; }
-  .insp__meta { display: flex; gap: .8rem; align-items: center; font-size: .7rem; margin-bottom: .4rem; }
-  .insp h3 { font-size: 1.45rem; line-height: 1.2; }
-  .insp__org { color: var(--muted); margin-top: .3rem; }
-  .insp ul { padding-left: 1.1rem; display: grid; gap: .35rem; font-size: .95rem; color: #d5d9e2; }
-  .insp ul:empty { display: none; }
+  /* Inspecteur, façon panneau de propriétés d'un logiciel de montage */
+  .insp { --c: var(--pro); border-top: 1px solid #000; background: linear-gradient(#171c28, #131722); }
+  .insp[data-k='formation'] { --c: var(--formation); }
+  .insp[data-k='crea'] { --c: var(--crea); }
+  .insp__bar { display: flex; align-items: center; gap: .8rem; padding: .55rem 1rem; font-size: .62rem;
+    background: linear-gradient(#1d2333, #181d2a); border-bottom: 1px solid #000; }
+  .insp__k { color: var(--gold); }
+  .insp__chip { padding: .15rem .55rem; border-radius: 999px; color: #0b0d13; background: var(--c); font-weight: 700; }
+  .insp__nav { margin-left: auto; display: inline-flex; align-items: center; gap: .5rem; color: var(--muted); }
+  .insp__nav button { width: 28px; height: 26px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel-2); color: var(--text); cursor: pointer; font-size: .7rem; }
+  .insp__nav button:hover { border-color: var(--c); color: var(--c); }
+  .insp__body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr) minmax(0, 1.4fr); gap: 1.6rem; align-items: start; padding: 1.3rem 1.4rem 1.5rem; }
+  .insp__id { display: flex; gap: 1rem; align-items: flex-start; }
+  .insp__thumb {
+    width: 64px; height: 64px; flex: none; border-radius: 12px; display: grid; place-items: center;
+    font: 700 1.7rem var(--font-title); color: #0b0d13;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--c) 70%, #fff), var(--c) 55%, color-mix(in srgb, var(--c) 60%, #000));
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / .4), 0 10px 24px -10px var(--c);
+  }
+  .insp h3 { font-size: 1.35rem; line-height: 1.2; }
+  .insp__org { color: color-mix(in srgb, var(--c) 70%, var(--muted)); margin-top: .3rem; }
+  .insp__props { margin: 0; display: grid; gap: .1rem; font-size: .7rem; border-left: 1px solid var(--line); padding-left: 1.2rem; }
+  .insp__props div { display: grid; grid-template-columns: 5.5rem 1fr; gap: .6rem; align-items: center; padding: .35rem 0; border-bottom: 1px dashed #ffffff0f; }
+  .insp__props dt { color: var(--muted); }
+  .insp__props dd { margin: 0; color: var(--text); text-transform: none; letter-spacing: .02em; }
+  .insp__pts { border-left: 1px solid var(--line); padding-left: 1.2rem; }
+  .insp__pts[hidden] { display: none; }
+  .insp__ptk { font-size: .6rem; color: var(--muted); margin-bottom: .5rem; }
+  .insp__pts ul { list-style: none; padding: 0; display: grid; gap: .45rem; font-size: .93rem; color: #d5d9e2; }
+  .insp__pts :global(li) { position: relative; padding-left: 1.1rem; }
+  .insp__pts :global(li)::before { content: ''; position: absolute; left: 0; top: .5em; width: 7px; height: 7px; background: var(--c); transform: rotate(45deg); border-radius: 1px; }
   .insp.is-swap .insp__body { animation: swap .35s ease; }
   @keyframes swap { from { opacity: 0; transform: translateY(6px); } }
   .tag { color: var(--text); border: 1px solid var(--line); border-radius: 999px; padding: .05rem .55rem; text-transform: none; }
@@ -246,6 +297,7 @@ const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org,
 
   @media (max-width: 860px) {
     .cols, .insp__body { grid-template-columns: 1fr; }
+    .insp__props, .insp__pts { border-left: 0; padding-left: 0; }
     .tl__heads { width: 92px; }
     .tl__head span, .ico { display: none; }
     .zoom input { display: none; }

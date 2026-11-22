@@ -170,25 +170,52 @@ if (tl) {
   });
   grid.addEventListener('pointerleave', () => hover.classList.remove('is-on'));
 
-  const data = JSON.parse(tl.querySelector('[data-insp-data]')?.textContent || '{}');
+  const raw = JSON.parse(tl.querySelector('[data-insp-data]')?.textContent || '{}');
+  const data = raw.clips ?? {};
+  const order: string[] = raw.order ?? [];
   const insp = tl.querySelector<HTMLElement>('[data-insp]')!;
   const field = (k: string) => insp.querySelector<HTMLElement>(`[data-i="${k}"]`)!;
+  // Durée totale d'un clip, tous passages additionnés, à la date du jour
+  const durOf = (segs: { s: string; e: string | null }[]) => segs.reduce((n, x) => {
+    const [ys, ms] = x.s.split('-').map(Number);
+    const end = x.e ? x.e.split('-').map(Number) : [today.getFullYear(), today.getMonth() + 1];
+    return n + Math.max(1, (end[0] - ys) * 12 + (end[1] - ms) + (x.e ? 1 : 0));
+  }, 0);
+  let current = '';
   const select = (id: string) => {
     const c = data[id];
     if (!c) return;
+    current = id;
     tl.querySelectorAll('.clip').forEach((el) => el.classList.toggle('is-selected', (el as HTMLElement).dataset.clip === id));
+    insp.dataset.k = c.k;
+    field('lane').textContent = c.lane;
+    field('thumb').textContent = (c.sh || c.o).slice(0, 1);
     field('t').textContent = c.t;
-    field('o').textContent = c.p ? `${c.o} · ${c.p}` : c.o;
-    const d = field('d');
-    d.textContent = c.d;
-    delete d.dataset.base;
-    if (c.since) { d.dataset.since = c.since; stampSince(insp); } else delete d.dataset.since;
+    field('o').textContent = c.o;
+    field('d').textContent = c.d;
+    // Formations : en années scolaires (une année se termine en juillet, pas en septembre)
+    const n = durOf(c.segs);
+    const yrs = Math.round(n / 12);
+    field('dur').textContent = c.dur || (c.k === 'formation' && yrs > 0 ? `${yrs} an${yrs > 1 ? 's' : ''}` : fmtDuree(n));
+    field('p').textContent = c.p || '—';
     field('g').textContent = /obtenu/i.test(c.g) ? `✓ ${c.g}` : c.g;
     field('g').classList.toggle('tag--ok', /obtenu/i.test(c.g));
+    field('ptk').textContent = c.k === 'formation' ? 'Détails' : 'Missions';
     field('pts').innerHTML = '';
     c.pts.forEach((p: string) => { const li = document.createElement('li'); li.textContent = p; field('pts').append(li); });
+    field('ptsbox').hidden = c.pts.length === 0;
+    const i = order.indexOf(id);
+    field('pos').textContent = i >= 0 ? `${i + 1} / ${order.length}` : '';
     insp.classList.remove('is-swap'); void insp.offsetWidth; insp.classList.add('is-swap');
   };
+  insp.querySelectorAll<HTMLButtonElement>('[data-insp-step]').forEach((b) => b.addEventListener('click', () => {
+    const i = order.indexOf(current);
+    const next = order[(i + Number(b.dataset.inspStep) + order.length) % order.length];
+    select(next);
+    unlock('clip');
+    if (next === 'alterboutique') unlock('colis');
+    if (next === 'bt-musique') unlock('sources');
+  }));
   tl.querySelectorAll<HTMLAnchorElement>('.clip').forEach((a) => {
     a.addEventListener('click', (e) => {
       const id = a.dataset.clip!;
