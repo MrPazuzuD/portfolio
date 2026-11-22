@@ -8,6 +8,7 @@ import Projects from '../components/Projects.astro';
 import HorsChamp from '../components/HorsChamp.astro';
 import Contact from '../components/Contact.astro';
 import Achievements from '../components/Achievements.astro';
+import Waves from '../components/Waves.astro';
 import { profile } from '../data/cv';
 ---
 <Base
@@ -15,6 +16,7 @@ import { profile } from '../data/cv';
   description={`${profile.title} à ${profile.location}. Parcours, compétences, projets, et tout ce qui se passe hors champ : musique, montage et jeux vidéo.`}
 >
   <a class="skip" href="#main">Aller au contenu</a>
+  <Waves />
   <Header />
   <main id="main">
     <Monitor />

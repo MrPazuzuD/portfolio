@@ -1,0 +1,96 @@
+---
+// Fond animé : ondes sonores qui suivent le défilement et le curseur (purement décoratif)
+---
+<canvas class="waves" data-waves aria-hidden="true"></canvas>
+
+<style>
+  .waves { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; opacity: .8; }
+  :global(main), :global(.credits) { position: relative; z-index: 1; }
+</style>
+
+<script>
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-waves]');
+  const ctx = canvas?.getContext('2d');
+  if (canvas && ctx) {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const dpr = Math.min(devicePixelRatio || 1, 1.5);
+    let w = 0, h = 0;
+    const resize = () => {
+      w = innerWidth; h = innerHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
+    addEventListener('resize', resize);
+
+    // Énergie : monte quand on fait défiler, retombe doucement (comme un vumètre)
+    let energy = 0.2, lastY = scrollY;
+    addEventListener('scroll', () => {
+      energy = Math.min(1.4, energy + Math.abs(scrollY - lastY) / 600);
+      lastY = scrollY;
+    }, { passive: true });
+
+    let mx = -9999, my = -9999;
+    addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
+
+    // Couleur dominante selon la section à l'écran
+    const tones: Record<string, string> = { top: '--crea', parcours: '--pro', competences: '--pro', projets: '--gold', 'hors-champ': '--crea', contact: '--gold' };
+    let accent = '--crea';
+    const spy = new IntersectionObserver((entries) => {
+      entries.forEach((en) => { if (en.isIntersecting) accent = tones[en.target.id] ?? accent; });
+    }, { rootMargin: '-50% 0px -50% 0px' });
+    Object.keys(tones).forEach((id) => { const el = document.getElementById(id); if (el) spy.observe(el); });
+
+    const css = (v: string) => getComputedStyle(document.documentElement).getPropertyValue(v).trim() || '#a98bff';
+    const waves = [
+      { y: 0.28, amp: 38, freq: 1.6, speed: 0.35, width: 1.4, alpha: 0.55, tone: 'accent' },
+      { y: 0.5, amp: 56, freq: 1.1, speed: 0.22, width: 2, alpha: 0.35, tone: '--pro' },
+      { y: 0.66, amp: 30, freq: 2.3, speed: 0.5, width: 1, alpha: 0.45, tone: '--gold' },
+      { y: 0.82, amp: 46, freq: 0.8, speed: 0.15, width: 1.6, alpha: 0.3, tone: '--crea' },
+    ];
+
+    let t = 0, running = true, frame = 0, colors: string[] = [];
+    const draw = () => {
+      if (frame++ % 30 === 0) colors = waves.map((wv) => css(wv.tone === 'accent' ? accent : wv.tone));
+      ctx.clearRect(0, 0, w, h);
+      energy += (0.2 - energy) * 0.02;
+      waves.forEach((wv, i) => {
+        const base = wv.y * h;
+        const amp = wv.amp * (0.6 + energy);
+        ctx.beginPath();
+        for (let x = 0; x <= w; x += 6) {
+          const k = x / w;
+          // Enveloppe douce pour que les bords restent calmes
+          const env = Math.sin(Math.PI * k) ** 1.5;
+          let y = base
+            + Math.sin(k * Math.PI * 2 * wv.freq + t * wv.speed * 4 + i) * amp * env
+            + Math.sin(k * Math.PI * 7 * wv.freq - t * wv.speed * 6) * amp * 0.18 * env;
+          // Le curseur creuse l'onde
+          const dx = x - mx, dy = base - my;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < 60000) y += (my - base) * 0.35 * Math.exp(-d2 / 18000);
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        const g = ctx.createLinearGradient(0, 0, w, 0);
+        g.addColorStop(0, 'transparent');
+        g.addColorStop(0.5, colors[i]);
+        g.addColorStop(1, 'transparent');
+        ctx.strokeStyle = g;
+        ctx.globalAlpha = wv.alpha;
+        ctx.lineWidth = wv.width;
+        ctx.shadowColor = colors[i];
+        ctx.shadowBlur = 12;
+        ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
+      t += 0.016;
+      if (running && !reduce) requestAnimationFrame(draw);
+    };
+    draw();
+    // Pause quand l'onglet n'est pas visible : zéro calcul inutile
+    document.addEventListener('visibilitychange', () => {
+      running = !document.hidden;
+      if (running && !reduce) requestAnimationFrame(draw);
+    });
+  }
+</script>

@@ -46,6 +46,7 @@ import { achievements } from '../data/achievements';
     border-bottom: 1px solid var(--line);
   }
   .hdr__bar { height: var(--header-h); display: flex; align-items: center; gap: 1.5rem; }
+  .trophy, .hdr__cv { flex: none; white-space: nowrap; }
   .brand { display: flex; align-items: center; gap: .8rem; text-decoration: none; }
   .brand__mark {
     font-family: var(--font-title); font-weight: 700; font-size: .95rem; color: #14110a;
@@ -57,7 +58,7 @@ import { achievements } from '../data/achievements';
   .nav { margin-left: auto; }
   .nav ul { list-style: none; display: flex; gap: .25rem; }
   .nav a {
-    display: block; padding: .45rem .8rem; border-radius: 999px; text-decoration: none;
+    display: block; padding: .45rem .8rem; border-radius: 999px; text-decoration: none; white-space: nowrap;
     font-size: .92rem; color: var(--muted); transition: color .2s, background .2s;
   }
   .nav a:hover, .nav a.is-active { color: var(--text); background: var(--panel-2); }
@@ -102,7 +103,8 @@ import { achievements } from '../data/achievements';
     clip-path: polygon(0 0, 100% 0, 50% 100%);
   }
 
-  @media (max-width: 860px) {
+  @media (max-width: 1100px) { .brand__dur { display: none; } .nav a { padding: .45rem .6rem; } .hdr__bar { gap: 1rem; } }
+  @media (max-width: 960px) {
     .nav, .hdr__cv, .brand__dur { display: none; }
     .menu { display: block; }
     .trophy { margin-left: auto; }
