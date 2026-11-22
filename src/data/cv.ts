@@ -38,6 +38,7 @@ export const profile = {
     github: 'https://github.com/MrPazuzuD',
     twitch: 'https://www.twitch.tv/pazuzuuu_',
     youtube: 'https://www.youtube.com/@pazuzuuu_',
+    steam: 'https://steamcommunity.com/profiles/76561199040627675/',
   },
   cvPdf: '/cv/Marine-Rimpot-CV.pdf',
 };
@@ -90,6 +91,19 @@ export const experiences: Clip[] = [
     period: 'Juil. – sept. 2021',
     tag: 'Saisonnier',
     points: ['Réassort, inventaire et rigueur sur les stocks'],
+  },
+  {
+    id: 'alterboutique',
+    track: 'pro',
+    lane: 'V1',
+    title: 'Préparation de commandes',
+    org: 'Alterboutique',
+    place: 'Toul',
+    start: '2018-07',
+    end: '2018-08',
+    period: 'Juil. 2018',
+    tag: 'Saisonnier',
+    points: ['Préparation et expédition des commandes'],
   },
   {
     id: 'mjc',
@@ -147,7 +161,22 @@ export const formations: Clip[] = [
     tag: 'Obtenu',
     points: [],
   },
+  {
+    id: 'bt-musique',
+    track: 'formation',
+    lane: 'V2',
+    title: 'Brevet de technicien des métiers de la musique',
+    org: 'Lycée Claude Daunot',
+    place: 'Nancy',
+    start: '2010-09',
+    end: '2013-07',
+    period: '2010 – 2013',
+    points: [],
+  },
 ];
+
+// Toujours du plus récent au plus ancien, quel que soit l'ordre de saisie
+for (const list of [experiences, formations]) list.sort((a, b) => b.start.localeCompare(a.start));
 
 // Pistes "créa" : affichées sur la timeline, détaillées dans Projets et Hors champ
 export const creaClips: Clip[] = [
@@ -186,7 +215,7 @@ export const creaClips: Clip[] = [
   },
 ];
 
-export const timelineRange = { from: 2014, to: 2028 };
+export const timelineRange = { from: 2010, to: 2028 };
 
 export const lanes = [
   { id: 'V1', label: 'Pro', track: 'pro' as Track },
@@ -256,7 +285,7 @@ export const projects = [
     summary:
       'Un projet monté avec des amis : un serveur Minecraft avec une vraie histoire, des personnages doublés et des quêtes. J’y gère l’administration, la modération et la vie de la communauté.',
     points: [],
-    youtube: { id: 'nfwdT6BOSbM', title: 'Bande-annonce de Miratopia' },
+    youtube: { id: 'nfwdT6BOSbM', title: 'Bande-annonce de Miratopia', thumb: '/miratopia.webp' },
     link: null as string | null,
     linkLabel: '',
   },
@@ -282,24 +311,23 @@ export const music = {
     'Musiques du monde', 'BO de films', 'BO de jeux', 'Danse de salon', 'Reprises',
   ],
   // Mettre ici le lien public de la playlist Spotify pour afficher le bouton
-  playlist: { name: 'Souvenir d’enfant', count: '3 600+', spotify: 'https://open.spotify.com/playlist/3zofhGkDNWlSXyc4t15vP5' as string },
+  playlist: { name: 'Souvenir d’enfant', count: '3 900+', spotify: 'https://open.spotify.com/playlist/3zofhGkDNWlSXyc4t15vP5' as string },
   text: 'Je chante depuis toute petite, et je joue de la guitare et de la batterie. Côté écoute, je passe de tout à tout, sans étiquette : la musique, pour moi, c’est surtout de la mémoire et de l’émotion.',
 };
 
-export const games = {
-  favorites: ['Red Dead Redemption 2', 'Hunt: Showdown'],
-  others: [
-    'GTA',
-    'Dead by Daylight',
-    'The Wolf Among Us',
-    'Les jeux Telltale',
-    'Overwatch',
-    '007 First Light',
-    'Satisfactory',
-    'Age of Empires IV',
-    'Planet Zoo',
-  ],
-};
+// Jaquettes : visuels officiels Steam, recadrés et optimisés dans public/games/
+export const games = [
+  { name: 'Red Dead Redemption 2', cover: '/games/rdr2.webp', fav: true },
+  { name: 'Hunt: Showdown 1896', cover: '/games/hunt.webp', fav: true },
+  { name: 'GTA V', cover: '/games/gta.webp' },
+  { name: 'Dead by Daylight', cover: '/games/dbd.webp' },
+  { name: 'The Wolf Among Us', cover: '/games/wolf.webp' },
+  { name: 'Overwatch', cover: '/games/overwatch.webp' },
+  { name: '007 First Light', cover: '/games/007.webp' },
+  { name: 'Satisfactory', cover: '/games/satisfactory.webp' },
+  { name: 'Age of Empires IV', cover: '/games/aoe4.webp' },
+  { name: 'Planet Zoo', cover: '/games/planetzoo.webp' },
+] as { name: string; cover: string; fav?: boolean }[];
 
 export const sections = [
   { id: 'parcours', label: 'Parcours' },

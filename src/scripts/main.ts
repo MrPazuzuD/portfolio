@@ -1,4 +1,5 @@
 // Interactions du site. Tout reste lisible sans JavaScript : ce fichier n'ajoute que des effets.
+import { achievements } from '../data/achievements';
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // 1. Tête de lecture + timecode : la page entière dure 2 minutes (le temps d'un recruteur)
@@ -62,9 +63,10 @@ waveBtn?.addEventListener('click', () => {
 });
 
 // 6. Lecteur YouTube léger : rien n'est chargé depuis YouTube avant le clic
-document.querySelectorAll<HTMLElement>('[data-yt]').forEach((box) => {
+document.querySelectorAll<HTMLElement>('[data-yt], [data-yt-off]').forEach((box) => {
   const link = box.querySelector('a');
   link?.addEventListener('click', (ev) => {
+    if (!box.dataset.yt) { unlock('trailer'); return; }
     ev.preventDefault();
     const iframe = document.createElement('iframe');
     iframe.src = `https://www.youtube-nocookie.com/embed/${box.dataset.yt}?autoplay=1&rel=0`;
@@ -73,6 +75,7 @@ document.querySelectorAll<HTMLElement>('[data-yt]').forEach((box) => {
     iframe.allowFullscreen = true;
     link.replaceWith(iframe);
     iframe.focus();
+    unlock('trailer');
   });
 });
 
@@ -84,13 +87,14 @@ if (tl) {
   const range = tl.querySelector<HTMLInputElement>('[data-zoom-range]')!;
   const hover = tl.querySelector<HTMLElement>('[data-tl-hover]')!;
   const total = Number(getComputedStyle(tl).getPropertyValue('--total')) || 168;
-  const from = 2014;
+  const from = 2010;
   const months = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
 
   const setZoom = (z: number, anchor = 0.5) => {
     z = Math.min(4, Math.max(1, z));
     const before = (scroller.scrollLeft + scroller.clientWidth * anchor) / grid.scrollWidth;
     grid.style.setProperty('--zoom', String(z));
+    if (z > 1) unlock('zoom');
     range.value = String(z);
     scroller.scrollLeft = before * grid.scrollWidth - scroller.clientWidth * anchor;
   };
@@ -115,6 +119,7 @@ if (tl) {
     hover.style.left = `${x}px`;
     hover.querySelector('span')!.textContent = `${months[m % 12]} ${from + Math.floor(m / 12)}`;
     hover.classList.add('is-on');
+    if (m < 12) unlock('past');
   });
   grid.addEventListener('pointerleave', () => hover.classList.remove('is-on'));
 
@@ -159,15 +164,24 @@ if (subs && !reduceMotion) {
   let i = 0;
   setInterval(() => {
     subs.classList.add('is-out');
-    setTimeout(() => { i = (i + 1) % lines.length; subs.textContent = lines[i]; subs.classList.remove('is-out'); }, 300);
+    setTimeout(() => {
+      i = (i + 1) % lines.length;
+      subs.textContent = lines[i];
+      subs.classList.remove('is-out');
+      // Tous les sous-titres lus, et l'accueil toujours à l'écran
+      if (i === lines.length - 1 && scrollY < innerHeight * 0.6) unlock('subs');
+    }, 300);
   }, 3200);
 }
+document.querySelector('#hero-title')?.addEventListener('pointerenter', () => unlock('glitch'));
 
 // 9. Faders de la console : le vumètre suit le curseur
 document.querySelectorAll<HTMLInputElement>('[data-fader]').forEach((f) => {
   f.addEventListener('input', () => {
-    f.closest<HTMLElement>('.strip')?.style.setProperty('--lvl', f.value);
+    f.closest<HTMLElement>('.strip')?.style.setProperty('--lv', f.value);
     unlock('mix');
+    if (Number(f.value) === 0) unlock('mute');
+    if (Number(f.value) === 100) unlock('max');
   });
 });
 
@@ -184,30 +198,84 @@ if (!reduceMotion && matchMedia('(hover: hover) and (pointer: fine)').matches) {
   });
 }
 
-// 11. Succès secrets (clin d'œil jeu vidéo)
-const achievements: Record<string, [string, string, string]> = {
-  clip: ['🎬', 'Monteuse en herbe', 'Premier clip ouvert dans l’inspecteur'],
-  mix: ['🎚️', 'Ingé son', 'Un fader a bougé sur la console'],
-  end: ['🏁', 'Jusqu’au générique', 'Vous avez tout regardé'],
-  konami: ['🎮', 'Code secret', '↑ ↑ ↓ ↓ ← → ← → B A'],
-};
-const unlocked = new Set<string>();
+// 11. Ludothèque : lancer une partie
+const played = new Set<number>();
+const gameBtns = document.querySelectorAll<HTMLButtonElement>('[data-game]');
+gameBtns.forEach((b, i) => {
+  b.addEventListener('click', () => {
+    const on = b.getAttribute('aria-pressed') !== 'true';
+    b.setAttribute('aria-pressed', String(on));
+    if (!on) return;
+    played.add(i);
+    unlock('play');
+    if (played.size === gameBtns.length) unlock('collector');
+  });
+});
+
+// 12. Liens suivis
+document.addEventListener('click', (e) => {
+  const a = (e.target as HTMLElement).closest('a');
+  if (!a) return;
+  if (a.hasAttribute('download')) unlock('cv');
+  if (/linkedin\.com|github\.com/.test(a.href)) unlock('network');
+});
+
+// 13. Succès : déblocage, toasts, panneau, progression gardée dans le navigateur
 function unlock(id: string) {
-  if (unlocked.has(id) || !achievements[id]) return;
+  if (unlocked.has(id) || !byId.has(id)) return;
   unlocked.add(id);
+  save();
+  render();
+  toast(id);
+  if (id !== 'platine' && unlocked.size === achievements.length - 1) setTimeout(() => unlock('platine'), 900);
+}
+const byId = new Map<string, (typeof achievements)[number]>(achievements.map((a) => [a.id, a]));
+const KEY = 'mr-succes';
+const unlocked = new Set<string>();
+try { (JSON.parse(localStorage.getItem(KEY) || '[]') as string[]).forEach((id) => byId.has(id) && unlocked.add(id)); } catch { /* stockage indisponible */ }
+function save() { try { localStorage.setItem(KEY, JSON.stringify([...unlocked])); } catch { /* rien */ } }
+function render() {
+  document.querySelectorAll('[data-ach-count]').forEach((el) => (el.textContent = String(unlocked.size)));
+  const bar = document.querySelector<HTMLElement>('[data-ach-bar]');
+  if (bar) bar.style.width = `${(unlocked.size / achievements.length) * 100}%`;
+  document.querySelectorAll<HTMLElement>('[data-ach]').forEach((li) => {
+    const on = unlocked.has(li.dataset.ach!);
+    li.classList.toggle('is-on', on);
+    li.querySelector('[data-ach-state]')!.textContent = on ? 'Débloqué' : 'Verrouillé';
+  });
+}
+function toast(id: string) {
+  const a = byId.get(id)!;
   let box = document.querySelector('.toasts');
   if (!box) { box = document.createElement('div'); box.className = 'toasts'; box.setAttribute('role', 'status'); document.body.append(box); }
-  const [icon, title, text] = achievements[id];
   const t = document.createElement('div');
   t.className = 'toast';
-  t.innerHTML = `<span class="toast__icon" aria-hidden="true">${icon}</span><div><b>Succès débloqué : ${title}</b><span>${text} · ${unlocked.size}/4</span></div>`;
+  t.innerHTML = `<span class="toast__icon" aria-hidden="true">${a.icon}</span><div><b>Succès débloqué : ${a.title}</b><span>${a.hint} · ${unlocked.size}/${achievements.length}</span></div>`;
   box.append(t);
+  while (box.children.length > 3) box.firstElementChild?.remove();
+  const trophy = document.querySelector('.trophy');
+  trophy?.classList.remove('is-bump'); void (trophy as HTMLElement | null)?.offsetWidth; trophy?.classList.add('is-bump');
   setTimeout(() => { t.classList.add('is-out'); setTimeout(() => t.remove(), 400); }, 4200);
 }
+render();
+
+const dialog = document.querySelector<HTMLDialogElement>('[data-ach-dialog]');
+document.querySelector('[data-ach-open]')?.addEventListener('click', () => dialog?.showModal());
+dialog?.querySelector('[data-ach-close]')?.addEventListener('click', () => dialog.close());
+dialog?.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+
+// Générique, speedrun et rembobinage
 const credits = document.querySelector('.credits');
 if (credits) {
-  new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { unlock('end'); o.disconnect(); } }).observe(credits);
+  new IntersectionObserver((e) => {
+    if (!e[0].isIntersecting) return;
+    unlock('end');
+    if (performance.now() < 20000) unlock('speedrun');
+  }).observe(credits);
 }
+addEventListener('scroll', () => { if (unlocked.has('end') && scrollY < 80) unlock('rewind'); }, { passive: true });
+
+// Code secret : mode arcade
 const code = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
 let pos = 0;
 addEventListener('keydown', (e) => {

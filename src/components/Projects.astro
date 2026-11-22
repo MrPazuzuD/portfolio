@@ -3,16 +3,6 @@ import { projects } from '../data/cv';
 import Icon from './Icon.astro';
 import SectionHead from './SectionHead.astro';
 
-// Décor en blocs pour Miratopia (motif fixe, généré à la construction)
-const sky = ['#1b2a4a', '#22345a', '#2a3f69'];
-const vox = Array.from({ length: 16 * 9 }, (_, i) => {
-  const x = i % 16, y = Math.floor(i / 16);
-  const ground = 5 + Math.round(Math.sin(x * 0.7) * 1.2 + Math.cos(x * 0.33));
-  if (y < ground) return sky[(x + y) % 3];
-  if (y === ground) return (x + y) % 2 ? '#4caf50' : '#43a047';
-  if (y === ground + 1) return '#8d6e63';
-  return (x * y) % 3 ? '#6d4c41' : '#5d4037';
-});
 const files = [
   { n: 'vacances_1998.avi', c: 'DivX → H.264', s: 'ok' },
   { n: 'anniversaire.avi', c: 'Xvid → H.264', s: 'run' },
@@ -69,9 +59,8 @@ const chat = [
             {'youtube' in p && p.youtube && (
               <div class="player" data-yt={p.youtube.id}>
                 <a class="player__facade" href={`https://www.youtube.com/watch?v=${p.youtube.id}`} target="_blank" rel="noopener">
-                  <span class="vox" aria-hidden="true">{vox.map((c) => <i style={`background:${c}`}></i>)}</span>
+                  <img class="player__img" src={p.youtube.thumb} alt="" width="960" height="540" loading="lazy" decoding="async" />
                   <span class="player__shade" aria-hidden="true"></span>
-                  <span class="player__title">{p.name}</span>
                   <span class="player__btn" aria-hidden="true"><Icon name="play" /></span>
                   <span class="player__label mono" aria-hidden="true">Bande-annonce</span>
                   <span class="sr-only">{p.youtube.title} (YouTube)</span>
@@ -153,10 +142,9 @@ const chat = [
     border-radius: 14px; border: 1px solid #000; overflow: hidden; text-decoration: none;
     box-shadow: 0 30px 70px -20px rgb(0 0 0 / .8), 0 0 0 1px rgb(255 255 255 / .08);
   }
-  .vox { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(16, 1fr); grid-template-rows: repeat(9, 1fr); }
-  .vox i { box-shadow: inset 0 0 0 1px rgb(0 0 0 / .12), inset 2px 2px 0 rgb(255 255 255 / .06); }
-  .player__shade { position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, transparent 20%, rgb(5 8 15 / .75)); }
-  .player__title { position: absolute; left: 1.2rem; bottom: 1rem; font-family: var(--font-title); font-weight: 700; font-size: clamp(1.5rem, 3vw, 2.4rem); text-shadow: 3px 3px 0 #000; }
+  .player__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+  .player__facade:hover .player__img { transform: scale(1.04); }
+  .player__shade { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgb(5 8 15 / .15), rgb(5 8 15 / .6)); }
   .player__label { position: absolute; right: 1rem; top: 1rem; font-size: .6rem; padding: .25rem .55rem; background: #000a; border-radius: 6px; }
   .player__btn {
     position: relative; width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center;

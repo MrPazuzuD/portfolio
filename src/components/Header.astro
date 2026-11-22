@@ -1,5 +1,6 @@
 ---
 import { profile, sections } from '../data/cv';
+import { achievements } from '../data/achievements';
 ---
 <header class="hdr">
   <div class="hdr__bar wrap">
@@ -14,6 +15,9 @@ import { profile, sections } from '../data/cv';
       </ul>
     </nav>
 
+    <button type="button" class="trophy" data-ach-open aria-haspopup="dialog" aria-label="Succès débloqués">
+      <span aria-hidden="true">🏆</span><span class="mono"><span data-ach-count>0</span>/{achievements.length}</span>
+    </button>
     <a class="btn btn--gold hdr__cv" href={profile.cvPdf} download>CV</a>
 
     <details class="menu">
@@ -58,8 +62,17 @@ import { profile, sections } from '../data/cv';
   }
   .nav a:hover, .nav a.is-active { color: var(--text); background: var(--panel-2); }
   .hdr__cv { padding: .5rem 1rem; }
+  .trophy {
+    display: inline-flex; align-items: center; gap: .4rem; padding: .45rem .75rem; border-radius: 999px; cursor: pointer;
+    background: var(--panel-2); border: 1px solid var(--line); color: var(--text); font: inherit;
+  }
+  .trophy .mono { color: var(--text); font-size: .72rem; }
+  .trophy:hover { border-color: var(--gold); }
+  .trophy.is-bump { animation: bump .5s ease; }
+  @keyframes bump { 40% { transform: scale(1.18); border-color: var(--gold); } }
+  :global(html:not(.js)) .trophy { display: none; }
 
-  .menu { display: none; margin-left: auto; position: relative; }
+  .menu { display: none; position: relative; }
   .menu summary {
     list-style: none; cursor: pointer; padding: .5rem .9rem; border: 1px solid var(--line);
     border-radius: 999px; font-size: .9rem; font-weight: 600;
@@ -92,5 +105,6 @@ import { profile, sections } from '../data/cv';
   @media (max-width: 860px) {
     .nav, .hdr__cv, .brand__dur { display: none; }
     .menu { display: block; }
+    .trophy { margin-left: auto; }
   }
 </style>

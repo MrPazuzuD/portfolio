@@ -1,0 +1,53 @@
+---
+import { achievements } from '../data/achievements';
+---
+<dialog class="ach" data-ach-dialog aria-labelledby="ach-title">
+  <div class="ach__head">
+    <div>
+      <p class="mono">Succès</p>
+      <h2 id="ach-title"><span data-ach-count>0</span> / {achievements.length} débloqués</h2>
+    </div>
+    <button type="button" class="ach__close" data-ach-close aria-label="Fermer">✕</button>
+  </div>
+  <div class="ach__bar" aria-hidden="true"><i data-ach-bar></i></div>
+  <ul class="ach__list">
+    {achievements.map((a) => (
+      <li data-ach={a.id}>
+        <span class="ach__icon" aria-hidden="true">{a.icon}</span>
+        <div><b>{a.title}</b><span>{a.hint}</span></div>
+        <span class="ach__state mono" data-ach-state>Verrouillé</span>
+      </li>
+    ))}
+  </ul>
+  <p class="ach__foot mono">Progression gardée dans ce navigateur uniquement.</p>
+</dialog>
+
+<style>
+  .ach {
+    width: min(560px, calc(100% - 2rem)); max-height: min(80vh, 760px); padding: 0; color: var(--text);
+    background: linear-gradient(180deg, #1c2231, #141924); border: 1px solid var(--line); border-radius: 18px;
+    box-shadow: 0 40px 120px rgb(0 0 0 / .8);
+  }
+  .ach::backdrop { background: rgb(5 7 12 / .7); backdrop-filter: blur(4px); }
+  .ach[open] { animation: pop .3s cubic-bezier(.2,.7,.2,1); }
+  @keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.98); } }
+  .ach__head { display: flex; justify-content: space-between; align-items: flex-start; padding: 1.4rem 1.4rem .8rem; }
+  .ach__head .mono { color: var(--gold); font-size: .65rem; }
+  .ach h2 { font-size: 1.5rem; margin-top: .2rem; }
+  .ach__close { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2); color: var(--text); cursor: pointer; font-size: 1rem; }
+  .ach__bar { margin: 0 1.4rem 1rem; height: 6px; border-radius: 3px; background: #0b0d13; overflow: hidden; }
+  .ach__bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--gold), #ffde6b); transition: width .5s ease; }
+  .ach__list { list-style: none; padding: 0 1rem; display: grid; gap: .4rem; overflow: auto; }
+  .ach__list li {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: .9rem; padding: .7rem .8rem;
+    border-radius: 12px; background: #0f131bcc; border: 1px solid #ffffff0d; opacity: .55; filter: grayscale(1);
+  }
+  .ach__list li.is-on { opacity: 1; filter: none; border-color: color-mix(in srgb, var(--gold) 45%, transparent); }
+  .ach__icon { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font-size: 1.25rem; background: var(--panel-2); }
+  .is-on .ach__icon { background: color-mix(in srgb, var(--gold) 25%, var(--panel-2)); }
+  .ach__list b { display: block; font-family: var(--font-title); }
+  .ach__list span { font-size: .85rem; color: var(--muted); }
+  .ach__state { font-size: .58rem; }
+  .is-on .ach__state { color: var(--gold); }
+  .ach__foot { padding: 1rem 1.4rem 1.3rem; font-size: .6rem; text-transform: none; }
+</style>

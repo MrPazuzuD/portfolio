@@ -5,21 +5,6 @@ import SectionHead from './SectionHead.astro';
 
 // Niveaux de départ des faders : tout est en haut, à quelques crans près
 const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
-// Jaquettes maison : couleurs d'ambiance, aucun visuel officiel
-const covers: Record<string, [string, string]> = {
-  'Red Dead Redemption 2': ['#b3261e', '#f29d38'],
-  'Hunt: Showdown': ['#2d3a1f', '#8a6d3b'],
-  'GTA': ['#e83e8c', '#18b5c9'],
-  'Dead by Daylight': ['#3a0a0a', '#c0392b'],
-  'The Wolf Among Us': ['#3d1f6e', '#f2c14e'],
-  'Les jeux Telltale': ['#2b2b2b', '#9aa3b5'],
-  'Overwatch': ['#f99e1a', '#43484c'],
-  '007 First Light': ['#0b0b0b', '#c9a227'],
-  'Satisfactory': ['#f58220', '#1f6f78'],
-  'Age of Empires IV': ['#1e3a6e', '#d4a64a'],
-  'Planet Zoo': ['#2e7d32', '#e5c34b'],
-};
-const gameList = [...games.favorites.map((g) => ({ g, fav: true })), ...games.others.map((g) => ({ g, fav: false }))];
 ---
 <section class="section" id="hors-champ" aria-labelledby="hc-title">
   <div class="wrap">
@@ -87,19 +72,24 @@ const gameList = [...games.favorites.map((g) => ({ g, fav: true })), ...games.ot
       <!-- Jeux -->
       <article class="tile depth reveal">
         <p class="mono k">Chutier · Jeux vidéo</p>
-        <h3>Ma ludothèque</h3>
+        <div class="games__head">
+          <h3>Ma ludothèque</h3>
+          <a class="btn" href={profile.links.steam} target="_blank" rel="noopener"><Icon name="steam" />Mon profil Steam</a>
+        </div>
         <ul class="games">
-          {gameList.map(({ g, fav }) => {
-            const [a, b] = covers[g] ?? ['#2a3142', '#9aa3b5'];
-            return (
-              <li class={`case tilt ${fav ? 'case--fav' : ''}`} style={`--a:${a};--b:${b}`}>
-                {fav && <span class="star mono">★ Favori</span>}
-                <span class="case__title">{g}</span>
-              </li>
-            );
-          })}
+          {games.map((g) => (
+            <li class={`case ${g.fav ? 'case--fav' : ''}`}>
+              <button type="button" class="case__btn tilt" data-game aria-pressed="false">
+                <img src={g.cover} alt="" width={g.fav ? 600 : 360} height={g.fav ? 900 : 540} loading="lazy" decoding="async" />
+                {g.fav && <span class="star mono">★ Favori</span>}
+                <span class="case__play mono" aria-hidden="true">▶ En jeu</span>
+                <span class="case__title">{g.name}</span>
+              </button>
+            </li>
+          ))}
           <li class="case case--more"><span class="case__title">Et plein d’autres…</span></li>
         </ul>
+        <p class="credit mono">Jaquettes : visuels officiels des éditeurs (Steam). Cliquez pour lancer une partie.</p>
       </article>
     </div>
   </div>
@@ -196,29 +186,45 @@ const gameList = [...games.favorites.map((g) => ({ g, fav: true })), ...games.ot
   }
 
   .games { list-style: none; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-flow: dense; gap: .8rem; }
-  .case {
-    position: relative; aspect-ratio: 3 / 4; border-radius: 10px; padding: .7rem; display: flex; flex-direction: column; justify-content: flex-end;
-    background:
-      linear-gradient(180deg, transparent 35%, rgb(0 0 0 / .75)),
-      radial-gradient(circle at 80% 15%, color-mix(in srgb, var(--b) 85%, transparent), transparent 60%),
-      linear-gradient(160deg, var(--a), color-mix(in srgb, var(--a) 40%, #000));
-    border: 1px solid #ffffff1f; overflow: hidden;
-    box-shadow: inset 0 1px 0 #ffffff33, 0 12px 24px -10px #000;
+  .case { position: relative; aspect-ratio: 2 / 3; }
+  .case--fav { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
+  .case__btn {
+    all: unset; box-sizing: border-box; cursor: pointer; position: absolute; inset: 0; border-radius: 10px; overflow: hidden;
+    border: 1px solid #ffffff1f; box-shadow: inset 0 1px 0 #ffffff33, 0 12px 24px -10px #000; background: #000;
   }
-  .case::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: linear-gradient(90deg, #0006, transparent); }
-  .case__title { font-family: var(--font-title); font-weight: 700; font-size: .92rem; line-height: 1.15; text-shadow: 0 2px 6px #000; }
-  .case--fav { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; outline: 2px solid var(--gold); outline-offset: 2px; }
-  .case--more { background: repeating-linear-gradient(-45deg, #ffffff08 0 8px, transparent 8px 16px), var(--panel-2); justify-content: center; align-items: center; text-align: center; color: var(--muted); }
-  .case--fav .case__title { font-size: clamp(1.3rem, 2.4vw, 1.9rem); }
-  .star { position: absolute; top: .6rem; left: .7rem; font-size: .58rem; color: #14110a; background: var(--gold); padding: .15rem .45rem; border-radius: 5px; }
-  .more { font-size: .65rem; }
+  .case__btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  .case--fav .case__btn { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .case img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease, filter .3s; }
+  .case__btn:hover img { transform: scale(1.06); }
+  .case__btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgb(0 0 0 / .85)); pointer-events: none; }
+  .case__title {
+    position: absolute; left: .7rem; right: .7rem; bottom: .6rem; z-index: 1; opacity: 0; transform: translateY(6px); transition: opacity .25s, transform .25s;
+    font-family: var(--font-title); font-weight: 700; font-size: .82rem; line-height: 1.15; text-shadow: 0 2px 6px #000;
+  }
+  .case--fav .case__title { font-size: clamp(1.1rem, 2vw, 1.5rem); }
+  .case__btn:hover .case__title, .case__btn:focus-visible .case__title { opacity: 1; transform: none; }
+  .case__btn::after { opacity: 0; transition: opacity .25s; }
+  .case__btn:hover::after, .case__btn:focus-visible::after { opacity: 1; }
+  @media (hover: none) { .case__title, .case__btn::after { opacity: 1; transform: none; } }
+  .star { position: absolute; z-index: 1; top: .6rem; left: .7rem; font-size: .58rem; color: #14110a; background: var(--gold); padding: .15rem .45rem; border-radius: 5px; }
+  .case__play {
+    position: absolute; z-index: 1; top: .6rem; right: .6rem; font-size: .55rem; padding: .2rem .45rem; border-radius: 5px;
+    background: #39ff88; color: #04130a; opacity: 0; transform: scale(.8); transition: opacity .2s, transform .2s;
+  }
+  .case__btn[aria-pressed='true'] .case__play { opacity: 1; transform: none; }
+  .case__btn[aria-pressed='true'] { box-shadow: 0 0 0 2px #39ff88, 0 0 24px #39ff8855; }
+  .case--more { aspect-ratio: auto; display: grid; place-items: center; text-align: center; border-radius: 10px; color: var(--muted);
+    background: repeating-linear-gradient(-45deg, #ffffff08 0 8px, transparent 8px 16px), var(--panel-2); border: 1px solid var(--line); }
+  .case--more .case__title { position: static; text-shadow: none; padding: .5rem; opacity: 1; transform: none; }
+  .games__head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .credit { font-size: .6rem; text-transform: none; }
+  @media (min-width: 861px) { .case--more { grid-column: span 2; } }
 
   @media (max-width: 860px) {
     .mixer__top, .tile--edit { grid-template-columns: 1fr; }
     .tile--edit .film { grid-column: 1; grid-row: auto; }
-    .games { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .case--fav { grid-row: auto; min-height: 130px; }
-    .case { aspect-ratio: 4 / 3; }
+    .games { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .case--fav { grid-column: span 3; grid-row: auto; aspect-ratio: 16 / 10; }
     .strips { grid-template-columns: repeat(12, 62px); }
   }
 </style>
