@@ -24,8 +24,9 @@ export const profile = {
   firstName: 'Marine',
   lastName: 'Rimpot',
   title: 'Technicienne support & systèmes',
-  current: 'Hotline et support logiciel chez 2DCOM',
+  current: 'Hotline et support logiciel chez 2DCOM (Chavigny, 54)',
   location: 'Épinal (88)',
+  locationLabel: 'Basée à Épinal (88)',
   pitch:
     'Je dépanne, j’explique, j’automatise quand je peux. Le reste du temps, je monte des vidéos, je chante et je joue.',
   // Mettre le chemin d'une image dans public/ (ex. '/photo.webp') pour afficher la photo

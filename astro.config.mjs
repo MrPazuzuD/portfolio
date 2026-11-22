@@ -4,5 +4,5 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://marine-rimpot.pages.dev',
   trailingSlash: 'ignore',
-  build: { inlineStylesheets: 'auto' },
+  build: { inlineStylesheets: 'auto', assets: 'assets' },
 });

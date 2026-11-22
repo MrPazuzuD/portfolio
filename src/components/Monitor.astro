@@ -29,7 +29,7 @@ import Icon from './Icon.astro';
             <span class="line line--gold">{profile.lastName}</span>
           </h1>
           <p class="pitch">{profile.pitch}</p>
-          <p class="now"><span class="now__item"><span class="dot" aria-hidden="true"></span>{profile.current}</span><span class="now__item"><Icon name="pin" />{profile.location}</span></p>
+          <p class="now"><span class="now__item"><span class="dot" aria-hidden="true"></span>{profile.current}</span><span class="now__item"><Icon name="pin" />{profile.locationLabel}</span></p>
 
           <div class="cta">
             <a class="btn btn--gold" href={profile.cvPdf} download><Icon name="download" />Télécharger le CV</a>
