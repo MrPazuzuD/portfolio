@@ -2,6 +2,7 @@
 import { music, games, films, profile, steamStats } from '../data/cv';
 import Icon from './Icon.astro';
 import SectionHead from './SectionHead.astro';
+import Lab from './Lab.astro';
 
 // Niveaux de départ des faders : tout est en haut, à quelques crans près
 // Forme d'onde de la piste audio du mini-montage (motif fixe)
@@ -11,7 +12,7 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
 <section class="section" id="hors-champ" aria-labelledby="hc-title">
   <div class="wrap">
     <SectionHead scene={4} label="Hors champ" title="Ce qui ne rentre pas dans une fiche de poste" id="hc-title">
-      La musique, le montage et le jeu vidéo. C’est de là que vient la forme de ce site.
+      Bidouiller, monter des vidéos, chanter, jouer. C’est de là que vient la forme de ce site.
     </SectionHead>
 
     <!-- Console de mixage -->
@@ -68,6 +69,9 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
     </article>
 
     <div class="duo">
+      <!-- Labo : la passion informatique -->
+      <Lab />
+
       <!-- Montage -->
       <article class="tile tile--edit depth glow reveal" style="--glow: var(--crea)">
         <p class="mono k">V3 · Montage</p>

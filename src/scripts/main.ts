@@ -458,6 +458,9 @@ function lockScroll(on: boolean) {
     de.style.scrollBehavior = '';
   }
 }
+// Événements venus des autres composants (terminal)
+document.addEventListener('ach:unlock', (e) => unlock((e as CustomEvent<string>).detail));
+document.addEventListener('scroll:lock', (e) => lockScroll((e as CustomEvent<boolean>).detail));
 document.querySelector('[data-ach-open]')?.addEventListener('click', () => { dialog?.showModal(); lockScroll(true); });
 dialog?.addEventListener('close', () => lockScroll(false));
 dialog?.querySelector('[data-ach-close]')?.addEventListener('click', () => dialog.close());

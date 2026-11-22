@@ -1,0 +1,113 @@
+---
+// Le labo : la passion informatique, façon terminal. Uniquement des faits réels, config volontairement générale.
+const specs = [
+  ['Machine', 'PC monté maison'],
+  ['Processeur', 'AMD Ryzen'],
+  ['Graphique', 'NVIDIA RTX'],
+  ['Écrans', '3'],
+  ['Systèmes', 'Windows 11 · Debian 13'],
+  ['Passe-temps', 'bidouiller, comprendre, réparer'],
+];
+const sessions = [
+  {
+    cmd: 'diagnostic --panne "carte graphique non détectée au démarrage à froid"',
+    out: ['Alimentation soupçonnée… puis écartée.', 'Cause : BIOS d’origine jamais mis à jour.', 'Flash du BIOS, test à froid : ça démarre. ✓'],
+  },
+  {
+    cmd: 'install debian-13 --machine portable',
+    out: ['Un portable sous Debian pour m’entraîner à l’administration système.'],
+  },
+  {
+    cmd: 'veille --sujet sysadmin',
+    out: ['Apache · Nginx · DNS · mail · commandes Linux'],
+  },
+];
+const logo = [
+  '  ███╗   ███╗██████╗ ',
+  '  ████╗ ████║██╔══██╗',
+  '  ██╔████╔██║██████╔╝',
+  '  ██║╚██╔╝██║██╔══██╗',
+  '  ██║ ╚═╝ ██║██║  ██║',
+  '  ╚═╝     ╚═╝╚═╝  ╚═╝',
+];
+---
+<article class="tile lab depth glow reveal" style="--glow: #39ff88" aria-labelledby="lab-title">
+  <div class="lab__head">
+    <div>
+      <p class="mono k">V5 · Le labo</p>
+      <h3 id="lab-title">J’aime comprendre pourquoi ça ne marche pas</h3>
+    </div>
+    <button type="button" class="btn btn--term" data-term-open><span class="mono" aria-hidden="true">&gt;_</span>Ouvrir le terminal</button>
+  </div>
+  <p class="txt">L’informatique, ce n’est pas que mon métier. J’aime bidouiller, chercher la vraie cause d’une panne et monter mon PC moi-même.</p>
+
+  <div class="term" role="group" aria-label="Terminal : ma configuration et quelques sessions">
+    <div class="term__bar mono" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span>marine@labo: ~</div>
+    <div class="term__body">
+      <p class="mono line"><span class="ps">marine@labo:~$</span> neofetch</p>
+      <div class="fetch">
+        <pre class="ascii" aria-hidden="true">{logo.join('\n')}</pre>
+        <dl class="mono">
+          <div class="who"><dt>marine</dt><dd>@labo</dd></div>
+          {specs.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+          <div class="swatch" aria-hidden="true">{['#ff5f57', '#febc2e', '#28c840', '#3cc7b5', '#a98bff', '#f2b705'].map((c) => <i style={`background:${c}`}></i>)}</div>
+        </dl>
+      </div>
+      {sessions.map((s, i) => (
+        <div class="sess" style={`--d:${i}`}>
+          <p class="mono line"><span class="ps">marine@labo:~$</span> {s.cmd}</p>
+          {s.out.map((o) => <p class="mono out">{o}</p>)}
+        </div>
+      ))}
+      <p class="mono line"><span class="ps">marine@labo:~$</span> <span class="caret" aria-hidden="true"></span></p>
+    </div>
+  </div>
+</article>
+
+<style>
+  .lab { display: grid; gap: 1.1rem; padding: clamp(1.4rem, 3vw, 2rem); border-radius: 22px; }
+  .lab__head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .k { color: #39ff88; font-size: .7rem; }
+  h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
+  .txt { color: #d5d9e2; max-width: 62ch; }
+  .btn--term { font: inherit; font-weight: 600; cursor: pointer; color: #39ff88; border-color: color-mix(in srgb, #39ff88 40%, var(--line)); background: #0a0f0c; }
+  .btn--term .mono { font-size: .9rem; }
+  .btn--term:hover { border-color: #39ff88; box-shadow: 0 0 16px -4px #39ff88; }
+
+  .term { border-radius: 12px; overflow: hidden; background: #07090d; border: 1px solid #000;
+    box-shadow: 0 30px 60px -25px #000, 0 0 0 1px rgb(255 255 255 / .06), inset 0 0 60px rgb(57 255 136 / .03); }
+  .term__bar { display: flex; align-items: center; gap: .8rem; padding: .5rem .8rem; font-size: .65rem; text-transform: none;
+    background: linear-gradient(#1c2130, #161a25); border-bottom: 1px solid #000; }
+  .dots { display: flex; gap: 6px; }
+  .dots i { width: 10px; height: 10px; border-radius: 50%; background: #ff5f57; }
+  .dots i:nth-child(2) { background: #febc2e; }
+  .dots i:nth-child(3) { background: #28c840; }
+  .term__body { padding: 1rem 1.2rem 1.2rem; display: grid; gap: .35rem; overflow-x: auto; }
+  .line, .out { margin: 0; text-transform: none; letter-spacing: 0; font-size: .82rem; color: #d5d9e2; white-space: pre-wrap; }
+  .ps { color: #39ff88; }
+  .out { color: #9aa3b5; padding-left: 1rem; }
+  .fetch { display: flex; gap: 2rem; align-items: center; margin: .3rem 0 .8rem; flex-wrap: wrap; }
+  .ascii { margin: 0; font: 700 .62rem/1.15 var(--font-mono); color: var(--gold); text-shadow: 0 0 10px color-mix(in srgb, var(--gold) 50%, transparent); }
+  dl { margin: 0; display: grid; gap: .2rem; font-size: .8rem; text-transform: none; letter-spacing: 0; }
+  dl div { display: flex; gap: .6rem; }
+  dt { color: #39ff88; min-width: 7.5rem; }
+  dd { margin: 0; color: #e6e9ef; }
+  .who dt, .who dd { color: var(--gold); font-weight: 700; min-width: 0; }
+  .who { padding-bottom: .3rem; margin-bottom: .2rem; border-bottom: 1px dashed #ffffff22; }
+  .swatch { margin-top: .4rem; gap: 0 !important; }
+  .swatch i { width: 22px; height: 12px; }
+  .sess { display: grid; gap: .2rem; margin-bottom: .4rem; }
+  .caret { display: inline-block; width: .55em; height: 1em; vertical-align: -.15em; background: #39ff88; }
+  @media (prefers-reduced-motion: no-preference) {
+    .caret { animation: caret 1s steps(2) infinite; }
+    @keyframes caret { 50% { opacity: 0; } }
+    :global(.js) .reveal .sess { opacity: 0; transform: translateY(4px); }
+    :global(.js) .reveal.is-in .sess { animation: sess .5s ease forwards; animation-delay: calc(.5s + var(--d) * .6s); }
+    @keyframes sess { to { opacity: 1; transform: none; } }
+  }
+  @media (max-width: 600px) {
+    .ascii { display: none; }
+    dt { min-width: 6.2rem; }
+    .line, .out, dl { font-size: .74rem; }
+  }
+</style>

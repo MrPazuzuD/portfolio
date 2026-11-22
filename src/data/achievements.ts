@@ -32,6 +32,9 @@ export const achievements = [
   { id: 'end', icon: '🏁', title: 'Jusqu’au générique', hint: 'Arriver au bout de la page' },
   { id: 'speedrun', icon: '⏱️', title: 'Speedrun', hint: 'Atteindre le générique en moins de 20 secondes' },
   { id: 'rewind', icon: '⏪', title: 'Rembobiner', hint: 'Revenir au début après le générique' },
+  { id: 'terminal', icon: '💻', title: 'Accès console', hint: 'Ouvrir le terminal' },
+  { id: 'hacker', icon: '⌨️', title: 'Ligne de commande', hint: 'Taper 5 commandes dans le terminal' },
+  { id: 'sudo', icon: '🛡️', title: 'Permission refusée', hint: 'Tenter un sudo dans le terminal' },
   { id: 'konami', icon: '🕹️', title: 'Code secret', hint: 'Un code de triche bien connu' },
   { id: 'platine', icon: '🏆', title: 'Platine', hint: 'Débloquer tous les autres succès' },
 ] as const;

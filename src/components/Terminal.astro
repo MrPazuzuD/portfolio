@@ -1,0 +1,192 @@
+---
+import { profile, experiences, projects, games, films, music } from '../data/cv';
+// Données utiles aux commandes, figées à la construction (rien de privé)
+const termData = {
+  name: `${profile.firstName} ${profile.lastName}`,
+  title: profile.title,
+  current: profile.current,
+  location: profile.locationLabel,
+  links: { linkedin: profile.links.linkedin, github: profile.links.github },
+  cv: profile.cvPdf,
+  jobs: experiences.map((e) => `${e.period.padEnd(30)} ${e.title} · ${e.org}`),
+  projects: projects.map((p) => p.name),
+  favGames: games.filter((g) => g.fav).map((g) => g.name),
+  films: films.slice(0, 5).map((f) => f.title),
+  instruments: music.instruments.filter((i) => i.main).map((i) => `${i.name} (${i.note})`),
+};
+---
+<dialog class="tm" data-term aria-label="Terminal">
+  <div class="tm__bar mono">
+    <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span>marine@portfolio: ~</span>
+    <button type="button" class="tm__close" data-term-close aria-label="Fermer le terminal">✕</button>
+  </div>
+  <div class="tm__out mono" data-term-out aria-live="polite"></div>
+  <form class="tm__in mono" data-term-form>
+    <label for="term-input"><span class="ps">marine@portfolio:~$</span></label>
+    <input id="term-input" data-term-input autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="send" />
+  </form>
+  <script type="application/json" data-term-data set:html={JSON.stringify(termData)} />
+</dialog>
+
+<style>
+  .tm {
+    width: min(760px, calc(100% - 1.5rem)); height: min(520px, 80vh); padding: 0; color: #d5d9e2;
+    background: #07090d; border: 1px solid #1f2a22; border-radius: 14px; overflow: hidden; overscroll-behavior: contain;
+    box-shadow: 0 40px 120px rgb(0 0 0 / .85), 0 0 0 1px rgb(57 255 136 / .12), 0 0 60px -20px rgb(57 255 136 / .35);
+  }
+  .tm[open] { display: flex; flex-direction: column; animation: tmpop .25s ease; }
+  @keyframes tmpop { from { opacity: 0; transform: scale(.97); } }
+  .tm::backdrop { background: rgb(3 5 8 / .7); backdrop-filter: blur(3px); }
+  .tm__bar { display: flex; align-items: center; gap: .8rem; padding: .55rem .8rem; font-size: .68rem; text-transform: none;
+    background: linear-gradient(#1c2130, #161a25); border-bottom: 1px solid #000; }
+  .dots { display: flex; gap: 6px; }
+  .dots i { width: 11px; height: 11px; border-radius: 50%; background: #ff5f57; }
+  .dots i:nth-child(2) { background: #febc2e; }
+  .dots i:nth-child(3) { background: #28c840; }
+  .tm__close { margin-left: auto; width: 30px; height: 26px; border-radius: 6px; border: 1px solid #2a3142; background: #161a25; color: #d5d9e2; cursor: pointer; }
+  .tm__out { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: .9rem 1rem .3rem; font-size: .84rem; line-height: 1.55; text-transform: none; letter-spacing: 0; }
+  .tm__out :global(p) { margin: 0; white-space: pre-wrap; }
+  .tm__out :global(.ps), .ps { color: #39ff88; }
+  .tm__out :global(p.cmd) { margin-top: .6rem; }
+  .tm__out :global(.dim) { color: #7d8698; }
+  .tm__out :global(.ok) { color: #39ff88; }
+  .tm__out :global(.warn) { color: #f2b705; }
+  .tm__out :global(.err) { color: #ff6b6b; }
+  .tm__out :global(a) { color: #8ecbff; }
+  .tm__in { display: flex; align-items: center; gap: .6rem; padding: .6rem 1rem .9rem; font-size: .84rem; text-transform: none; letter-spacing: 0; }
+  .tm__in input { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; color: #fff; font: inherit; caret-color: #39ff88; font-size: 16px; }
+  @media (min-width: 600px) { .tm__in input { font-size: .84rem; } }
+</style>
+
+<script>
+  const dlg = document.querySelector<HTMLDialogElement>('[data-term]');
+  if (dlg) {
+    const out = dlg.querySelector<HTMLElement>('[data-term-out]')!;
+    const form = dlg.querySelector<HTMLFormElement>('[data-term-form]')!;
+    const input = dlg.querySelector<HTMLInputElement>('[data-term-input]')!;
+    const D = JSON.parse(dlg.querySelector('[data-term-data]')?.textContent || '{}');
+    const unlock = (id: string) => document.dispatchEvent(new CustomEvent('ach:unlock', { detail: id }));
+    const lock = (on: boolean) => document.dispatchEvent(new CustomEvent('scroll:lock', { detail: on }));
+    const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+    const print = (html: string, cls = '') => { const p = document.createElement('p'); if (cls) p.className = cls; p.innerHTML = html; out.append(p); };
+    const history: string[] = [];
+    let hPos = 0, count = 0, started = false;
+
+    const goto = (id: string, label: string) => {
+      print(`<span class="ok">→ Direction ${label}…</span>`);
+      setTimeout(() => {
+        // On attend que la fenêtre soit fermée (et la page débloquée) avant de se déplacer
+        dlg.addEventListener('close', () => requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })), { once: true });
+        dlg.close();
+      }, 450);
+    };
+    const link = (href: string, label: string) => `<a href="${href}" target="_blank" rel="noopener">${esc(label)}</a>`;
+
+    const cmds: Record<string, (args: string[]) => void> = {
+      help: () => print([
+        'Commandes disponibles :',
+        '  <span class="ok">whoami</span>       qui je suis',
+        '  <span class="ok">neofetch</span>     ma machine, en gros',
+        '  <span class="ok">ls</span>           les sections du site',
+        '  <span class="ok">cd</span> &lt;section&gt; aller à une section (parcours, competences, projets, hors-champ, contact)',
+        '  <span class="ok">jobs</span>         mon parcours pro',
+        '  <span class="ok">projets</span>      ce que je fabrique',
+        '  <span class="ok">cat cv</span>       télécharger mon CV',
+        '  <span class="ok">contact</span>      me joindre',
+        '  <span class="ok">play</span>         mes jeux favoris',
+        '  <span class="ok">music</span>        mes instruments',
+        '  <span class="ok">films</span>        quelques films que j’adore',
+        '  <span class="ok">date</span>         la date du jour',
+        '  <span class="ok">clear</span>        effacer l’écran',
+        '  <span class="ok">exit</span>         fermer le terminal',
+        '<span class="dim">Il y a aussi quelques commandes cachées. Flèches ↑ ↓ pour l’historique.</span>',
+      ].join('\n')),
+      whoami: () => print(`${esc(D.name)}\n${esc(D.title)}\n${esc(D.current)}\n${esc(D.location)}`),
+      neofetch: () => print([
+        '<span class="warn">marine</span>@<span class="warn">labo</span>',
+        '<span class="dim">────────────</span>',
+        '<span class="ok">Machine</span>     PC monté maison',
+        '<span class="ok">Processeur</span>  AMD Ryzen',
+        '<span class="ok">Graphique</span>   NVIDIA RTX',
+        '<span class="ok">Systèmes</span>    Windows 11 · Debian 13',
+        '<span class="ok">Uptime</span>      depuis toujours à bidouiller',
+      ].join('\n')),
+      ls: () => print('<span class="ok">parcours/</span>  <span class="ok">competences/</span>  <span class="ok">projets/</span>  <span class="ok">hors-champ/</span>  <span class="ok">contact/</span>  cv.pdf'),
+      cd: (a) => {
+        const map: Record<string, string> = { parcours: 'parcours', competences: 'competences', 'compétences': 'competences', projets: 'projets', 'hors-champ': 'hors-champ', horschamp: 'hors-champ', contact: 'contact', '~': 'top', '/': 'top', '..': 'top' };
+        const t = (a[0] || '').replace(/\/$/, '').toLowerCase();
+        if (!t) return print('<span class="dim">Usage : cd parcours</span>');
+        if (!map[t]) return print(`<span class="err">cd: ${esc(t)}: aucun dossier de ce nom</span>`);
+        goto(map[t], t === '~' || t === '/' || t === '..' ? 'l’accueil' : t);
+      },
+      jobs: () => print(D.jobs.map(esc).join('\n')),
+      projets: () => print(D.projects.map((p: string) => `• ${esc(p)}`).join('\n')),
+      cat: (a) => {
+        if ((a[0] || '').replace('.pdf', '') === 'cv') { print(`Ouverture du CV… ${link(D.cv, 'cv.pdf')}`); unlock('cv'); }
+        else print(`<span class="err">cat: ${esc(a[0] || '')}: fichier introuvable</span> <span class="dim">(essayez cat cv)</span>`);
+      },
+      contact: () => print(`LinkedIn : ${link(D.links.linkedin, 'linkedin.com/in/marine-rimpot')}\nGitHub   : ${link(D.links.github, 'github.com/MrPazuzuD')}`),
+      play: () => print(`Partie lancée : ${D.favGames.map(esc).join(', ')}.\n<span class="dim">À plus tard, j’ai un contrat à remplir dans l’Ouest.</span>`),
+      music: () => print(`${D.instruments.map(esc).join(' · ')}\n<span class="dim">Et j’écoute de tout. Vraiment de tout.</span>`),
+      films: () => print(D.films.map((f: string) => `🎬 ${esc(f)}`).join('\n') + '\n<span class="dim">… et la suite dans la salle de projection.</span>'),
+      date: () => print(new Date().toLocaleString('fr-FR', { dateStyle: 'full', timeStyle: 'short' })),
+      clear: () => { out.innerHTML = ''; },
+      exit: () => dlg.close(),
+      // Commandes cachées
+      sudo: (a) => {
+        unlock('sudo');
+        if (a.join(' ').includes('café') || a.join(' ').includes('cafe')) return print('<span class="warn">[sudo] mot de passe pour marine :</span> ********\n☕ Café en préparation… Vous êtes bien en hotline, merci de patienter.');
+        print('<span class="err">marine n’est pas dans le fichier sudoers. Cet incident sera signalé.</span>\n<span class="dim">(à la hotline, bien sûr)</span>');
+      },
+      reboot: () => print('Avez-vous essayé de l’éteindre et de le rallumer ? <span class="ok">✓ C’est fait.</span>'),
+      'rm': (a) => { if (a.join(' ').includes('-rf')) { print('<span class="err">Bien tenté. Les sauvegardes sont à jour.</span>'); unlock('sudo'); } else print('<span class="dim">rm : rien à supprimer ici.</span>'); },
+      konami: () => print('<span class="dim">Pas ici. Essayez plutôt avec les flèches, hors du terminal.</span>'),
+      hello: () => print('Salut ! 👋'),
+      bonjour: () => print('Bonjour ! Support informatique, je vous écoute. 🎧'),
+    };
+
+    const run = (raw: string) => {
+      const line = raw.trim();
+      print(`<span class="ps">marine@portfolio:~$</span> ${esc(line)}`, 'cmd');
+      if (!line) return;
+      history.push(line); hPos = history.length;
+      const [name, ...args] = line.split(/\s+/);
+      const fn = cmds[name.toLowerCase()];
+      if (fn) { fn(args); count++; if (count >= 5) unlock('hacker'); }
+      else print(`<span class="err">${esc(name)} : commande introuvable.</span> <span class="dim">Tapez help.</span>`);
+      out.scrollTop = out.scrollHeight;
+    };
+
+    const open = () => {
+      if (dlg.open) return;
+      dlg.showModal(); lock(true); unlock('terminal');
+      if (!started) {
+        started = true;
+        print('<span class="ok">Portfolio OS</span> <span class="dim">· terminal de Marine</span>');
+        print('<span class="dim">Tapez</span> <span class="ok">help</span> <span class="dim">pour voir les commandes.</span>');
+      }
+      setTimeout(() => input.focus(), 30);
+    };
+    dlg.addEventListener('close', () => lock(false));
+    dlg.querySelector('[data-term-close]')?.addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+    form.addEventListener('submit', (e) => { e.preventDefault(); run(input.value); input.value = ''; });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowUp' && history.length) { hPos = Math.max(0, hPos - 1); input.value = history[hPos]; e.preventDefault(); }
+      if (e.key === 'ArrowDown' && history.length) { hPos = Math.min(history.length, hPos + 1); input.value = history[hPos] ?? ''; e.preventDefault(); }
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const m = Object.keys(cmds).filter((c) => c.startsWith(input.value) && c.length > 1);
+        if (m.length === 1) input.value = m[0] + ' ';
+      }
+    });
+    document.querySelectorAll('[data-term-open]').forEach((b) => b.addEventListener('click', open));
+    // Raccourci clavier : ² ou ` (touche sous Échap), hors champs de saisie
+    addEventListener('keydown', (e) => {
+      const t = e.target;
+      if (t instanceof Element && t.closest('input, textarea, [contenteditable]')) return;
+      if (e.key === '²' || e.key === '`' || e.code === 'Backquote') { e.preventDefault(); open(); }
+    });
+  }
+</script>
