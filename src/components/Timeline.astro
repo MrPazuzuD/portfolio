@@ -2,8 +2,10 @@
 import { experiences, formations, creaClips, lanes, timelineRange, type Clip } from '../data/cv';
 import SectionHead from './SectionHead.astro';
 
-const total = (timelineRange.to - timelineRange.from) * 12;
+// Valeurs de repli calculées à la construction ; le script les recalcule à la date du visiteur
 const now = new Date();
+const to = now.getFullYear() + timelineRange.yearsAhead;
+const total = (to - timelineRange.from) * 12;
 const toMonths = (d: string | null) => {
   if (!d) return (now.getFullYear() - timelineRange.from) * 12 + now.getMonth() + 1;
   const [y, m] = d.split('-').map(Number);
@@ -19,12 +21,12 @@ const pos = (c: Clip) => {
 const all = [...experiences, ...formations, ...creaClips];
 // Un poste occupé plusieurs fois donne un clip par passage
 const segments = all.flatMap((c) => [c, ...(c.more ?? []).map((m) => ({ ...c, start: m.start, end: m.end }))]);
-const years = Array.from({ length: timelineRange.to - timelineRange.from }, (_, i) => timelineRange.from + i);
+const years = Array.from({ length: to - timelineRange.from }, (_, i) => timelineRange.from + i);
 const nowPct = toMonths(null) / total;
 const hrefFor = (c: Clip) => (c.track === 'crea' ? (c.id === 'contenu' ? '#hors-champ' : `#projet-${c.id}`) : `#clip-${c.id}`);
 const first = experiences[0];
 // Données de l'inspecteur, lues par le script
-const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org, p: c.place ?? '', d: c.period, g: c.tag ?? '', pts: c.points }]));
+const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org, p: c.place ?? '', d: c.period, g: c.tag ?? '', pts: c.points, since: c.end ? '' : c.start }]));
 ---
 <section class="section" id="parcours" aria-labelledby="parcours-title">
   <div class="wrap">
@@ -32,7 +34,7 @@ const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org,
       Chaque piste raconte une partie de mon parcours. Zoomez, survolez, cliquez sur un clip pour l’ouvrir dans l’inspecteur.
     </SectionHead>
 
-    <div class="app depth reveal" data-tl style={`--total:${total}`}>
+    <div class="app depth reveal" data-tl data-from={timelineRange.from} data-ahead={timelineRange.yearsAhead} style={`--total:${total}`}>
       <div class="app__bar mono">
         <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
         <span>Séquence · parcours_marine</span>
@@ -56,14 +58,14 @@ const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org,
         </div>
         <div class="tl__scroll" data-tl-scroll>
           <div class="tl__grid" data-tl-grid>
-            <div class="tl__years" aria-hidden="true">
+            <div class="tl__years" aria-hidden="true" data-tl-years>
               {years.map((y, i) => <span style={`left:${(i * 12 / total) * 100}%`}>{y}</span>)}
             </div>
             <ul class="tl__lanes" aria-label="Clips du parcours">
               {lanes.map((l) => (
                 <li class="tl__lane">
                   {segments.filter((c) => c.lane === l.id).map((c) => (
-                    <a class={`clip clip--${c.track} ${c.end ? '' : 'clip--live'}`} href={hrefFor(c)} style={pos(c)} data-clip={c.id}
+                    <a class={`clip clip--${c.track} ${c.end ? '' : 'clip--live'}`} href={hrefFor(c)} style={pos(c)} data-clip={c.id} data-s={c.start} data-e={c.end ?? ''}
                        aria-label={`${c.title}, ${c.org}, ${c.period}`}>
                       <span class="clip__thumb" aria-hidden="true">{(c.short ?? c.org).slice(0, 1)}</span>
                       <span class="clip__name">{c.short ?? c.org}</span>
@@ -72,7 +74,7 @@ const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org,
                 </li>
               ))}
             </ul>
-            <div class="tl__now" style={`--x:${nowPct}`} aria-hidden="true"><span class="mono">Aujourd’hui</span></div>
+            <div class="tl__now" style={`--x:${nowPct}`} aria-hidden="true" data-tl-now><span class="mono">Aujourd’hui</span></div>
             <div class="tl__hover" data-tl-hover aria-hidden="true"><span class="mono"></span></div>
           </div>
         </div>
@@ -82,7 +84,7 @@ const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org,
         <p class="mono insp__k">Inspecteur</p>
         <div class="insp__body">
           <div>
-            <p class="mono insp__meta"><span data-i="d">{first.period}</span><span class="tag" data-i="g">{first.tag}</span></p>
+            <p class="mono insp__meta"><span data-i="d" data-since={first.end ? undefined : first.start}>{first.period}</span><span class="tag" data-i="g">{first.tag}</span></p>
             <h3 data-i="t">{first.title}</h3>
             <p class="insp__org" data-i="o">{first.org} · {first.place}</p>
           </div>
@@ -100,7 +102,7 @@ const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org,
             {col.list.map((c) => (
               <li class={`card card--${c.track} depth reveal`} id={`clip-${c.id}`}>
                 <div class="card__meta mono">
-                  <span>{c.period}</span>
+                  <span data-since={c.end ? undefined : c.start}>{c.period}</span>
                   {c.tag && <span class="tag">{c.tag}</span>}
                 </div>
                 <h4>{c.title}</h4>
@@ -160,7 +162,7 @@ const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org,
     background: repeating-linear-gradient(90deg, #ffffff12 0 1px, transparent 1px calc(100% / (var(--total) / 3)));
     background-size: 100% 8px; background-position: bottom; background-repeat: no-repeat;
   }
-  .tl__years span {
+  .tl__years :global(span) {
     position: absolute; top: 0; height: 100%; padding: 8px 0 0 6px; border-left: 1px solid #ffffff22;
     font-family: var(--font-mono); font-size: .68rem; color: var(--muted);
   }
@@ -203,7 +205,7 @@ const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org,
 
   .tl__now, .tl__hover { position: absolute; top: 0; bottom: 0; width: 2px; pointer-events: none; }
   .tl__now { left: calc((100% - 1rem) * var(--x)); background: var(--rec); box-shadow: 0 0 12px var(--rec); z-index: 1; opacity: .9; }
-  .tl__now span { position: absolute; bottom: 4px; right: 6px; color: var(--rec); font-size: .6rem; white-space: nowrap; background: #0c0f16; padding: 0 .3rem; border-radius: 3px; }
+  .tl__now span { position: absolute; top: 21px; right: 5px; color: var(--rec); font-size: .58rem; line-height: 1.4; white-space: nowrap; background: #0c0f16; padding: 0 .3rem; border-radius: 3px; }
   .tl__hover { left: 0; background: #ffffff70; opacity: 0; transition: opacity .15s; z-index: 4; }
   .tl__hover span { position: absolute; top: 3px; left: 6px; font-size: .6rem; color: #fff; white-space: nowrap; background: #000a; padding: 0 .3rem; border-radius: 3px; }
   .tl__hover.is-on { opacity: 1; }

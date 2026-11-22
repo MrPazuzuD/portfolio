@@ -229,7 +229,8 @@ export const creaClips: Clip[] = [
   },
 ];
 
-export const timelineRange = { from: 2010, to: 2028 };
+// La fin de l'échelle suit la date du jour (année en cours + 2), recalculée dans le navigateur
+export const timelineRange = { from: 2010, yearsAhead: 2 };
 
 export const lanes = [
   { id: 'V1', label: 'Pro', track: 'pro' as Track },

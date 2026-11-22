@@ -79,15 +79,61 @@ document.querySelectorAll<HTMLElement>('[data-yt], [data-yt-off]').forEach((box)
   });
 });
 
+// 6 bis. Tout ce qui dépend de la date du jour : le site reste à jour sans être reconstruit
+const today = new Date();
+const monthsBetween = (ym: string) => {
+  const [y, m] = ym.split('-').map(Number);
+  return (today.getFullYear() - y) * 12 + today.getMonth() - (m - 1);
+};
+const fmtDuree = (n: number) => {
+  n = Math.max(1, n);
+  const a = Math.floor(n / 12), m = n % 12;
+  const parts = [a ? `${a} an${a > 1 ? 's' : ''}` : '', m ? `${m} mois` : ''].filter(Boolean);
+  return parts.join(' ');
+};
+function stampSince(root: ParentNode = document) {
+  root.querySelectorAll<HTMLElement>('[data-since]').forEach((el) => {
+    if (!el.dataset.base) el.dataset.base = el.textContent ?? '';
+    el.textContent = `${el.dataset.base} · ${fmtDuree(monthsBetween(el.dataset.since!))}`;
+  });
+}
+stampSince();
+document.querySelectorAll('[data-year]').forEach((el) => (el.textContent = String(today.getFullYear())));
+
 // 7. Timeline : zoom, repère de survol, inspecteur
 const tl = document.querySelector<HTMLElement>('[data-tl]');
 if (tl) {
+  // Échelle recalculée à la date du jour : de l'année de départ à l'année en cours + 2
+  const fromY = Number(tl.dataset.from) || 2010;
+  const toY = today.getFullYear() + (Number(tl.dataset.ahead) || 2);
+  const span = (toY - fromY) * 12;
+  const mIdx = (ym: string) => { const [y, m] = ym.split('-').map(Number); return (y - fromY) * 12 + (m - 1); };
+  const nowIdx = (today.getFullYear() - fromY) * 12 + today.getMonth() + today.getDate() / 31;
+  tl.style.setProperty('--total', String(span));
+  const yearsBox = tl.querySelector<HTMLElement>('[data-tl-years]');
+  if (yearsBox) {
+    yearsBox.innerHTML = '';
+    for (let y = fromY; y < toY; y++) {
+      const el = document.createElement('span');
+      el.textContent = String(y);
+      el.style.left = `${((y - fromY) * 12 / span) * 100}%`;
+      yearsBox.append(el);
+    }
+  }
+  tl.querySelectorAll<HTMLElement>('.clip').forEach((c) => {
+    const s = mIdx(c.dataset.s!);
+    const e = c.dataset.e ? mIdx(c.dataset.e) : span;
+    c.style.left = `calc(${(s / span) * 100}% + 1px)`;
+    c.style.width = `calc(${(Math.max(e - s, 1) / span) * 100}% - 2px)`;
+  });
+  tl.querySelector<HTMLElement>('[data-tl-now]')?.style.setProperty('--x', String(nowIdx / span));
+
   const grid = tl.querySelector<HTMLElement>('[data-tl-grid]')!;
   const scroller = tl.querySelector<HTMLElement>('[data-tl-scroll]')!;
   const range = tl.querySelector<HTMLInputElement>('[data-zoom-range]')!;
   const hover = tl.querySelector<HTMLElement>('[data-tl-hover]')!;
-  const total = Number(getComputedStyle(tl).getPropertyValue('--total')) || 168;
-  const from = 2010;
+  const total = span;
+  const from = fromY;
   const months = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
 
   const setZoom = (z: number, anchor = 0.5) => {
@@ -132,7 +178,10 @@ if (tl) {
     tl.querySelectorAll('.clip').forEach((el) => el.classList.toggle('is-selected', (el as HTMLElement).dataset.clip === id));
     field('t').textContent = c.t;
     field('o').textContent = c.p ? `${c.o} · ${c.p}` : c.o;
-    field('d').textContent = c.d;
+    const d = field('d');
+    d.textContent = c.d;
+    delete d.dataset.base;
+    if (c.since) { d.dataset.since = c.since; stampSince(insp); } else delete d.dataset.since;
     field('g').textContent = c.g;
     field('pts').innerHTML = '';
     c.pts.forEach((p: string) => { const li = document.createElement('li'); li.textContent = p; field('pts').append(li); });
