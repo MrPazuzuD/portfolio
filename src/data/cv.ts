@@ -358,8 +358,8 @@ export const games = [
   { name: 'Eco', cover: '/games/eco.webp' },
   { name: '007 First Light', cover: '/games/007.webp' },
   { name: 'The Wolf Among Us', cover: '/games/wolf.webp' },
-  { name: 'Les Life is Strange', cover: '/games/lis.webp' },
-  { name: 'The Dark Pictures', cover: '/games/darkpictures.webp' },
+  { name: 'Life is Strange: Reunion', cover: '/games/lis.webp' },
+  { name: 'The Dark Pictures : House of Ashes', cover: '/games/darkpictures.webp' },
   { name: 'Age of Empires IV', cover: '/games/aoe4.webp' },
   { name: 'Planet Zoo', cover: '/games/planetzoo.webp' },
 ] as { name: string; cover: string; fav?: boolean; showTitle?: boolean }[];
