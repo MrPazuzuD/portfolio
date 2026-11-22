@@ -3,16 +3,18 @@ import { profile } from '../data/cv';
 import Icon from './Icon.astro';
 ---
 <section class="hero" id="top" aria-labelledby="hero-title">
-  <div class="wrap">
-    <div class="monitor depth">
+    <div class="monitor">
       <div class="monitor__top mono" aria-hidden="true">
-        <span><span class="rec"></span>Programme</span>
-        <span class="hide-sm">marine_rimpot_2026.prproj</span>
-        <span>1920 × 1080 · 25 i/s</span>
+        <div class="wrap bar">
+          <span><span class="rec"></span>Programme</span>
+          <span class="hide-sm">marine_rimpot_2026.prproj</span>
+          <span>1920 × 1080 · 25 i/s</span>
+        </div>
       </div>
 
       <div class="screen">
         <span class="safe" aria-hidden="true"></span>
+        <div class="wrap screen__wrap">
         <div class="vu" aria-hidden="true">
           {['L', 'R'].map((ch, k) => (
             <div class="vu__ch">
@@ -37,29 +39,31 @@ import Icon from './Icon.astro';
             <a class="btn" href={profile.links.github} rel="me noopener" target="_blank"><Icon name="github" />GitHub</a>
           </div>
         </div>
+        </div>
       </div>
 
       <p class="subs" aria-hidden="true"><span data-subs>[Bruit de clavier]</span></p>
       <div class="transport mono" aria-hidden="true">
-        <span class="tc" data-tc>00:00:00:00</span>
-        <span class="controls"><i>⏮</i><i class="play">▶</i><i>⏭</i></span>
-        <span class="hint">Faites défiler pour lire ↓</span>
+        <div class="wrap bar">
+          <span class="tc" data-tc>00:00:00:00</span>
+          <span class="controls"><i>⏮</i><i class="play">▶</i><i>⏭</i></span>
+          <span class="hint">Faites défiler pour lire ↓</span>
+        </div>
       </div>
     </div>
-  </div>
 </section>
 
 <style>
-  .hero { padding: clamp(1.5rem, 4vw, 3rem) 0 2rem; }
+  /* Moniteur plein écran : toute la largeur et la hauteur de la première vue */
+  .hero { padding: 0; }
   .monitor {
-    position: relative; border-radius: 20px;
-    box-shadow: 0 40px 120px -40px rgb(0 0 0 / .8), inset 0 1px 0 rgb(255 255 255 / .04);
-    overflow: hidden;
+    position: relative; overflow: hidden; display: flex; flex-direction: column;
+    min-height: calc(100svh - var(--header-h) - 10px);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 40px 120px -40px rgb(0 0 0 / .8);
   }
-  .monitor__top, .transport {
-    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
-    padding: .7rem 1.1rem; background: var(--panel);
-  }
+  .monitor__top, .transport { background: color-mix(in srgb, var(--panel) 85%, transparent); }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .7rem 0; }
   .monitor__top { border-bottom: 1px solid var(--line); }
   .transport { border-top: 1px solid var(--line); }
   .rec {
@@ -69,7 +73,7 @@ import Icon from './Icon.astro';
   @keyframes blink { to { visibility: hidden; } }
 
   .screen {
-    position: relative; padding: clamp(2.5rem, 7vw, 5.5rem) clamp(1.25rem, 6vw, 5rem) clamp(3rem, 8vw, 6.5rem);
+    position: relative; flex: 1; display: flex; align-items: center; padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(3.5rem, 6vw, 5rem);
     background:
       radial-gradient(1200px 500px at 85% -10%, color-mix(in srgb, var(--crea) 22%, transparent), transparent 60%),
       radial-gradient(900px 500px at -10% 110%, color-mix(in srgb, var(--pro) 16%, transparent), transparent 60%),
@@ -88,10 +92,11 @@ import Icon from './Icon.astro';
       linear-gradient(var(--muted), var(--muted)) bottom right / 1px 22px;
     background-repeat: no-repeat;
   }
+  .screen__wrap { position: relative; }
   .screen__inner { position: relative; display: grid; gap: 1.2rem; }
   .photo { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); }
   .eyebrow { color: var(--gold); font-size: .85rem; }
-  h1 { font-size: clamp(3.2rem, 11vw, 8.5rem); font-weight: 700; letter-spacing: -0.045em; line-height: .92; text-shadow: 0 12px 40px rgb(0 0 0 / .6); }
+  h1 { font-size: clamp(3.2rem, 11vw, 9.5rem); font-weight: 700; letter-spacing: -0.045em; line-height: .92; text-shadow: 0 12px 40px rgb(0 0 0 / .6); }
   @media (prefers-reduced-motion: no-preference) {
     h1:hover .line { animation: rgb .5s steps(2) 2; }
     @keyframes rgb {
@@ -130,7 +135,7 @@ import Icon from './Icon.astro';
     @keyframes rise { from { opacity: 0; transform: translateY(30%); clip-path: inset(0 0 100% 0); } to { opacity: 1; transform: none; clip-path: inset(0); } }
   }
   /* Vumètres L/R : clin d'œil à la console de mixage */
-  .vu { position: absolute; right: clamp(2rem, 6vw, 5rem); top: 50%; translate: 0 -50%; display: flex; gap: 1.1rem; }
+  .vu { position: absolute; right: 0; top: 50%; translate: 0 -50%; display: flex; gap: 1.1rem; }
   .vu__ch { display: grid; gap: .6rem; justify-items: center; }
   .vu__bar { display: flex; flex-direction: column-reverse; gap: 4px; }
   .vu__bar i { width: 34px; height: 9px; border-radius: 2px; background: color-mix(in srgb, var(--pro) 80%, transparent); }
@@ -146,8 +151,9 @@ import Icon from './Icon.astro';
 
   @media (max-width: 640px) {
     .hide-sm, .hint { display: none; }
-    .hero { padding-top: 1rem; }
-    .screen { padding: 2rem 1.25rem; }
+    .monitor { min-height: 0; }
+    .safe { inset: 8px; }
+    .screen { padding: 2rem 0 2.5rem; }
     .screen__inner { gap: .9rem; }
     h1 { font-size: 3.4rem; }
     .pitch { font-size: 1.05rem; }
