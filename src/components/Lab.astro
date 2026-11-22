@@ -28,12 +28,10 @@ const logo = [
 ];
 ---
 <article class="tile lab depth glow reveal" style="--glow: #39ff88" aria-labelledby="lab-title">
+  <p class="mono k">V5 · Le labo</p>
   <div class="lab__head">
-    <div>
-      <p class="mono k">V5 · Le labo</p>
-      <h3 id="lab-title">J’aime comprendre pourquoi ça ne marche pas</h3>
-    </div>
-    <button type="button" class="btn btn--term" data-term-open><span class="mono" aria-hidden="true">&gt;_</span>Ouvrir le terminal</button>
+    <h3 id="lab-title">J’aime comprendre pourquoi ça ne marche pas</h3>
+    <button type="button" class="btn btn--term" data-term-open><span class="prompt mono" aria-hidden="true">&gt;_</span>Ouvrir le terminal</button>
   </div>
   <p class="txt">L’informatique, ce n’est pas que mon métier, c’est aussi ce que je fais pour le plaisir. J’ai monté mon PC moi-même, et quand quelque chose plante, je ne lâche rien avant d’avoir trouvé pourquoi.</p>
 
@@ -67,7 +65,9 @@ const logo = [
   h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
   .txt { color: #d5d9e2; max-width: 62ch; }
   .btn--term { font: inherit; font-weight: 600; cursor: pointer; color: #39ff88; border-color: color-mix(in srgb, #39ff88 40%, var(--line)); background: #0a0f0c; }
-  .btn--term .mono { font-size: .9rem; }
+  .btn--term { line-height: 1; }
+  .prompt { display: inline-grid; place-items: center; height: 1.5em; padding: 0 .4em; border-radius: 5px; font-size: .8rem; line-height: 1;
+    background: rgb(57 255 136 / .12); text-transform: none; letter-spacing: 0; }
   .btn--term:hover { border-color: #39ff88; box-shadow: 0 0 16px -4px #39ff88; }
 
   .term { border-radius: 12px; overflow: hidden; background: #07090d; border: 1px solid #000;
