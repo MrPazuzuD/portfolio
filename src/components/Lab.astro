@@ -1,11 +1,14 @@
 ---
 // Le labo : la passion informatique, façon terminal. Uniquement des faits réels, config volontairement générale.
 const specs = [
+  ['OS', 'Windows 11'],
   ['Machine', 'PC monté maison'],
-  ['Processeur', 'AMD Ryzen'],
-  ['Graphique', 'NVIDIA RTX'],
-  ['Écrans', '3'],
-  ['Systèmes', 'Windows 11 · Debian 13'],
+  ['Processeur', 'AMD Ryzen 5 7600X'],
+  ['Graphique', 'NVIDIA RTX 4060 Ti'],
+  ['Mémoire', '32 Go DDR5'],
+  ['Carte mère', 'Gigabyte B650 Gaming X AX'],
+  ['Stockage', 'NVMe 2 To + SSD 500 Go'],
+  ['Écrans', '3 (dont un ultrawide)'],
   ['Passe-temps', 'bidouiller, comprendre, réparer'],
 ];
 const sessions = [
@@ -14,8 +17,8 @@ const sessions = [
     out: ['Alimentation soupçonnée… puis écartée.', 'Cause : BIOS d’origine jamais mis à jour.', 'Flash du BIOS, test à froid : ça démarre. ✓'],
   },
   {
-    cmd: 'install debian-13 --machine portable',
-    out: ['Un portable sous Debian pour m’entraîner à l’administration système.'],
+    cmd: 'build --pc maison',
+    out: ['Choix des pièces, montage, câblage, mises à jour.', 'Et quand ça plante, je cherche pourquoi.'],
   },
   {
     cmd: 'veille --sujet sysadmin',
