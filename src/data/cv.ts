@@ -339,16 +339,24 @@ export const music = {
   text: 'Le chant et la guitare sont mes deux instruments : je chante depuis toujours et je joue de la guitare depuis 23 ans. Je me débrouille aussi un peu au piano et à la batterie. Côté écoute, je passe de tout à tout, sans étiquette : la musique, pour moi, c’est surtout de la mémoire et de l’émotion.',
 };
 
+// Chiffres de ma bibliothèque Steam (à mettre à jour de temps en temps)
+export const steamStats = { games: 346, dlc: 441 };
+
 // Jaquettes : visuels officiels Steam, recadrés et optimisés dans public/games/
 export const games = [
   { name: 'Red Dead Redemption 2', cover: '/games/rdr2.webp', fav: true },
   { name: 'Hunt: Showdown 1896', cover: '/games/hunt.webp', fav: true },
-  { name: 'GTA V', cover: '/games/gta.webp' },
-  { name: 'Dead by Daylight', cover: '/games/dbd.webp' },
-  { name: 'The Wolf Among Us', cover: '/games/wolf.webp' },
-  { name: 'Overwatch', cover: '/games/overwatch.webp' },
-  { name: '007 First Light', cover: '/games/007.webp' },
   { name: 'Satisfactory', cover: '/games/satisfactory.webp' },
+  { name: 'Subnautica 2', cover: '/games/subnautica2.webp' },
+  { name: 'Cyberpunk 2077', cover: '/games/cyberpunk.webp' },
+  { name: 'Overwatch', cover: '/games/overwatch.webp' },
+  { name: 'Dead by Daylight', cover: '/games/dbd.webp' },
+  { name: 'Rust', cover: '/games/rust.webp' },
+  { name: 'ARC Raiders', cover: '/games/arc.webp' },
+  { name: 'GTA V', cover: '/games/gta.webp' },
+  { name: 'Eco', cover: '/games/eco.webp' },
+  { name: '007 First Light', cover: '/games/007.webp' },
+  { name: 'The Wolf Among Us', cover: '/games/wolf.webp' },
   { name: 'Age of Empires IV', cover: '/games/aoe4.webp' },
   { name: 'Planet Zoo', cover: '/games/planetzoo.webp' },
 ] as { name: string; cover: string; fav?: boolean }[];

@@ -1,5 +1,5 @@
 ---
-import { music, games, films, profile } from '../data/cv';
+import { music, games, films, profile, steamStats } from '../data/cv';
 import Icon from './Icon.astro';
 import SectionHead from './SectionHead.astro';
 
@@ -139,7 +139,10 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
       <article class="tile depth glow reveal" style="--glow: #39ff88">
         <p class="mono k">Chutier · Jeux vidéo</p>
         <div class="games__head">
-          <h3>Ma ludothèque</h3>
+          <div class="lib">
+            <h3>Ma ludothèque</h3>
+            <p class="stats"><span><b>{steamStats.games}</b> jeux</span><span><b>{steamStats.dlc}</b> DLC</span><span class="mono">sur Steam</span></p>
+          </div>
           <a class="btn" href={profile.links.steam} target="_blank" rel="noopener"><Icon name="steam" />Mon profil Steam</a>
         </div>
         <ul class="games">
@@ -153,7 +156,7 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
               </button>
             </li>
           ))}
-          <li class="case case--more"><span class="case__title">Et plein d’autres…</span></li>
+          <li class="case case--more"><span class="case__title"><b class="more__n">+ {steamStats.games - games.length}</b>autres jeux dans ma bibliothèque</span></li>
         </ul>
         <p class="credit mono">Jaquettes : visuels officiels des éditeurs (Steam). Cliquez pour lancer une partie.</p>
       </article>
@@ -370,7 +373,12 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
   @media (max-width: 860px) { .posters { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   @media (max-width: 520px) { .posters { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; } }
   @media (hover: none) { .poster__cap { opacity: 1; transform: none; } .poster img { filter: brightness(.75); } }
-  @media (min-width: 861px) { .case--more { grid-column: span 2; } }
+  @media (min-width: 861px) { .case--more { grid-column: span 3; } }
+  .lib { display: grid; gap: .45rem; }
+  .more__n { display: block; font-family: var(--font-title); font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--text); }
+  .stats { display: flex; align-items: baseline; flex-wrap: wrap; gap: .4rem 1.1rem; color: var(--muted); font-size: .9rem; }
+  .stats b { font-family: var(--font-title); font-size: 1.5rem; color: var(--text); margin-right: .25rem; }
+  .stats .mono { font-size: .6rem; }
 
   @media (max-width: 860px) {
     .mixer__top, .split { grid-template-columns: 1fr; }
@@ -391,7 +399,7 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
     .games { grid-template-columns: repeat(6, minmax(0, 1fr)); }
     .case { grid-column: span 2; }
     .case--fav { grid-column: span 3; grid-row: auto; aspect-ratio: 2 / 3; }
-    .case--more { grid-column: span 2; aspect-ratio: 2 / 3; }
+    .case--more { grid-column: span 4; aspect-ratio: auto; }
   }
   @media (max-width: 520px) {
     .strips { grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 10px; }
