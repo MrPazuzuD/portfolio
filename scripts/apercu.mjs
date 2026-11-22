@@ -13,6 +13,7 @@ cpSync('dist/films', `${out}/films`, { recursive: true });
 cpSync('dist/montage', `${out}/montage`, { recursive: true });
 cpSync('dist/miratopia.webp', `${out}/miratopia.webp`);
 cpSync('dist/video-toolbox.webp', `${out}/video-toolbox.webp`);
+cpSync('dist/davinci-resolve.png', `${out}/davinci-resolve.png`);
 for (const f of readdirSync('dist/assets')) {
   if (f.endsWith('.css') || f.endsWith('.js') || /-latin(-ext)?-wght/.test(f)) cpSync(`dist/assets/${f}`, `${out}/assets/${f}`);
 }
@@ -24,6 +25,7 @@ const html = readFileSync(`${out}/index.html`, 'utf8')
   .replaceAll('"/montage/', '"./montage/')
   .replaceAll('"/miratopia.webp"', '"./miratopia.webp"')
   .replaceAll('"/video-toolbox.webp"', '"./video-toolbox.webp"')
+  .replaceAll('"/davinci-resolve.png"', '"./davinci-resolve.png"')
   .replaceAll('data-yt=', 'data-yt-off=');
 writeFileSync(`${out}/index.html`, html);
 for (const f of readdirSync(`${out}/assets`).filter((f) => f.endsWith('.css'))) {
