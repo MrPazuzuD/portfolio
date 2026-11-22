@@ -75,3 +75,142 @@ document.querySelectorAll<HTMLElement>('[data-yt]').forEach((box) => {
     iframe.focus();
   });
 });
+
+// 7. Timeline : zoom, repère de survol, inspecteur
+const tl = document.querySelector<HTMLElement>('[data-tl]');
+if (tl) {
+  const grid = tl.querySelector<HTMLElement>('[data-tl-grid]')!;
+  const scroller = tl.querySelector<HTMLElement>('[data-tl-scroll]')!;
+  const range = tl.querySelector<HTMLInputElement>('[data-zoom-range]')!;
+  const hover = tl.querySelector<HTMLElement>('[data-tl-hover]')!;
+  const total = Number(getComputedStyle(tl).getPropertyValue('--total')) || 168;
+  const from = 2014;
+  const months = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+
+  const setZoom = (z: number, anchor = 0.5) => {
+    z = Math.min(4, Math.max(1, z));
+    const before = (scroller.scrollLeft + scroller.clientWidth * anchor) / grid.scrollWidth;
+    grid.style.setProperty('--zoom', String(z));
+    range.value = String(z);
+    scroller.scrollLeft = before * grid.scrollWidth - scroller.clientWidth * anchor;
+  };
+  tl.querySelectorAll<HTMLButtonElement>('[data-zoom]').forEach((b) =>
+    b.addEventListener('click', () => setZoom(Number(range.value) + Number(b.dataset.zoom) * 0.5)));
+  range.addEventListener('input', () => setZoom(Number(range.value)));
+  tl.querySelector('[data-zoom-fit]')?.addEventListener('click', () => setZoom(1));
+  // Ctrl + molette pour zoomer, comme dans un logiciel de montage
+  scroller.addEventListener('wheel', (e) => {
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+    const r = scroller.getBoundingClientRect();
+    setZoom(Number(range.value) - Math.sign(e.deltaY) * 0.25, (e.clientX - r.left) / r.width);
+  }, { passive: false });
+
+  grid.addEventListener('pointermove', (e) => {
+    const r = grid.getBoundingClientRect();
+    const usable = r.width - 16;
+    const x = e.clientX - r.left;
+    if (x < 0 || x > usable) return hover.classList.remove('is-on');
+    const m = Math.floor((x / usable) * total);
+    hover.style.left = `${x}px`;
+    hover.querySelector('span')!.textContent = `${months[m % 12]} ${from + Math.floor(m / 12)}`;
+    hover.classList.add('is-on');
+  });
+  grid.addEventListener('pointerleave', () => hover.classList.remove('is-on'));
+
+  const data = JSON.parse(tl.querySelector('[data-insp-data]')?.textContent || '{}');
+  const insp = tl.querySelector<HTMLElement>('[data-insp]')!;
+  const field = (k: string) => insp.querySelector<HTMLElement>(`[data-i="${k}"]`)!;
+  const select = (id: string) => {
+    const c = data[id];
+    if (!c) return;
+    tl.querySelectorAll('.clip').forEach((el) => el.classList.toggle('is-selected', (el as HTMLElement).dataset.clip === id));
+    field('t').textContent = c.t;
+    field('o').textContent = c.p ? `${c.o} · ${c.p}` : c.o;
+    field('d').textContent = c.d;
+    field('g').textContent = c.g;
+    field('pts').innerHTML = '';
+    c.pts.forEach((p: string) => { const li = document.createElement('li'); li.textContent = p; field('pts').append(li); });
+    insp.classList.remove('is-swap'); void insp.offsetWidth; insp.classList.add('is-swap');
+  };
+  tl.querySelectorAll<HTMLAnchorElement>('.clip').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const id = a.dataset.clip!;
+      // Les clips créa renvoient vers leur section ; les autres s'ouvrent dans l'inspecteur
+      if (a.classList.contains('clip--crea')) return;
+      e.preventDefault();
+      select(id);
+      unlock('clip');
+    });
+  });
+  select(tl.querySelector<HTMLElement>('.clip--pro.clip--live')?.dataset.clip ?? '');
+}
+
+// 8. Sous-titres de l'accueil
+const subs = document.querySelector<HTMLElement>('[data-subs]');
+if (subs && !reduceMotion) {
+  const lines = [
+    '[Bruit de clavier]',
+    'Support informatique, bonjour, je vous écoute.',
+    'Vous avez essayé de redémarrer ?',
+    '[Musique épique]',
+    'Rendu terminé. Lecture dans 3, 2, 1…',
+  ];
+  let i = 0;
+  setInterval(() => {
+    subs.classList.add('is-out');
+    setTimeout(() => { i = (i + 1) % lines.length; subs.textContent = lines[i]; subs.classList.remove('is-out'); }, 300);
+  }, 3200);
+}
+
+// 9. Faders de la console : le vumètre suit le curseur
+document.querySelectorAll<HTMLInputElement>('[data-fader]').forEach((f) => {
+  f.addEventListener('input', () => {
+    f.closest<HTMLElement>('.strip')?.style.setProperty('--lvl', f.value);
+    unlock('mix');
+  });
+});
+
+// 10. Inclinaison 3D au survol (souris uniquement)
+if (!reduceMotion && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  document.querySelectorAll<HTMLElement>('.tilt').forEach((el) => {
+    el.addEventListener('pointermove', (e) => {
+      const r = el.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      el.style.transform = `perspective(900px) rotateX(${(-y * 6).toFixed(2)}deg) rotateY(${(x * 8).toFixed(2)}deg) translateY(-3px)`;
+    });
+    el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+  });
+}
+
+// 11. Succès secrets (clin d'œil jeu vidéo)
+const achievements: Record<string, [string, string, string]> = {
+  clip: ['🎬', 'Monteuse en herbe', 'Premier clip ouvert dans l’inspecteur'],
+  mix: ['🎚️', 'Ingé son', 'Un fader a bougé sur la console'],
+  end: ['🏁', 'Jusqu’au générique', 'Vous avez tout regardé'],
+  konami: ['🎮', 'Code secret', '↑ ↑ ↓ ↓ ← → ← → B A'],
+};
+const unlocked = new Set<string>();
+function unlock(id: string) {
+  if (unlocked.has(id) || !achievements[id]) return;
+  unlocked.add(id);
+  let box = document.querySelector('.toasts');
+  if (!box) { box = document.createElement('div'); box.className = 'toasts'; box.setAttribute('role', 'status'); document.body.append(box); }
+  const [icon, title, text] = achievements[id];
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<span class="toast__icon" aria-hidden="true">${icon}</span><div><b>Succès débloqué : ${title}</b><span>${text} · ${unlocked.size}/4</span></div>`;
+  box.append(t);
+  setTimeout(() => { t.classList.add('is-out'); setTimeout(() => t.remove(), 400); }, 4200);
+}
+const credits = document.querySelector('.credits');
+if (credits) {
+  new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { unlock('end'); o.disconnect(); } }).observe(credits);
+}
+const code = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+let pos = 0;
+addEventListener('keydown', (e) => {
+  pos = e.key.toLowerCase() === code[pos].toLowerCase() ? pos + 1 : (e.key === code[0] ? 1 : 0);
+  if (pos === code.length) { pos = 0; unlock('konami'); document.documentElement.classList.toggle('arcade'); }
+});

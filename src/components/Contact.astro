@@ -4,8 +4,8 @@ import Icon from './Icon.astro';
 ---
 <section class="section contact" id="contact" aria-labelledby="contact-title">
   <div class="wrap">
-    <div class="box reveal">
-      <p class="mono marker">Marqueur 05 · Contact</p>
+    <div class="box depth reveal">
+      <p class="mono marker">Scène 05 · Contact</p>
       <h2 id="contact-title">On en parle ?</h2>
       <p class="lead">Le plus simple pour me joindre, c’est LinkedIn.</p>
       <div class="cta">
@@ -27,6 +27,7 @@ import Icon from './Icon.astro';
       <div><dt>Montage</dt><dd>{profile.firstName} {profile.lastName}</dd></div>
       <div><dt>Code</dt><dd>Astro, avec l’aide de Claude (IA)</dd></div>
     </dl>
+    <p class="hint" title="Un code de triche bien connu">↑ ↑ ↓ ↓ ← → ← → B A</p>
     <p>© {new Date().getFullYear()}</p>
   </div>
 </footer>
@@ -50,6 +51,7 @@ import Icon from './Icon.astro';
   .credits dl { margin: 0; display: grid; gap: .5rem; }
   .credits dl div { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
   .credits dt { text-align: right; }
+  .hint { opacity: .35; letter-spacing: .3em; }
   .credits dd { margin: 0; text-align: left; color: var(--text); text-transform: none; }
   @media (max-width: 600px) { .cta .btn { flex: 1 1 100%; justify-content: center; } }
 </style>

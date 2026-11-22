@@ -37,6 +37,7 @@ export const profile = {
     linkedin: 'https://www.linkedin.com/in/marine-rimpot-927815208/',
     github: 'https://github.com/MrPazuzuD',
     twitch: 'https://www.twitch.tv/pazuzuuu_',
+    youtube: 'https://www.youtube.com/@pazuzuuu_',
   },
   cvPdf: '/cv/Marine-Rimpot-CV.pdf',
 };
@@ -223,8 +224,8 @@ export const skills = [
   },
   {
     group: 'Savoir-être',
-    items: ['Écoute', 'Rigueur', 'Autonomie', 'Gestion d’équipe', 'Organisation d’événements', 'Adaptabilité'],
-    where: 'LESPSY, Miratopia, événements caritatifs',
+    items: ['Écoute', 'Rigueur', 'Autonomie', 'Gestion d’équipe', 'Organisation d’événements', 'Modération de communautés', 'Adaptabilité'],
+    where: 'LESPSY, Miratopia, lives caritatifs',
   },
 ];
 
@@ -236,7 +237,7 @@ export const projects = [
     year: '2026',
     stack: ['Python', 'ffmpeg', 'NVENC', 'Tkinter'],
     summary:
-      'Plus de 700 vieilles vidéos DivX que la télé refusait de lire. Plutôt que de les convertir à la main, j’ai écrit une application qui le fait proprement.',
+      'Plus de 700 vieilles vidéos DivX que la télé refusait de lire. Plutôt que de tout convertir à la main, j’ai imaginé une application qui le fait proprement : j’ai défini le besoin et les fonctions, puis testé chaque version. Le code a été écrit avec l’IA.',
     points: [
       'Analyse par glisser-déposer et verdict de compatibilité TV',
       'Sept préréglages de conversion, accélération par la carte graphique avec repli automatique sur le processeur',
@@ -262,11 +263,11 @@ export const projects = [
   {
     id: 'caritatif',
     name: 'Événements caritatifs gaming',
-    kind: 'Organisation',
+    kind: 'Modération & création',
     year: 'Depuis 2021',
-    stack: ['Organisation', 'Animation', 'Live'],
+    stack: ['Modération', 'Création de contenu', 'Live'],
     summary:
-      'Des lives et des événements de jeu au profit d’associations : TTV Fest, Téléthon Gaming, Une semaine pour l’espoir, Arma des dons.',
+      'Des lives de jeu au profit d’associations : TTV Fest, Téléthon Gaming, Une semaine pour l’espoir, Arma des dons. J’y modère les chats et je crée du contenu pour d’autres streameurs.',
     points: [],
     link: null as string | null,
     linkLabel: '',
@@ -275,8 +276,14 @@ export const projects = [
 
 export const music = {
   instruments: ['Chant', 'Guitare', 'Batterie'],
-  pillars: ['Jazz', 'Rock / Metal', 'Électro / Techno'],
-  text: 'Je chante depuis toute petite, et je joue de la guitare et de la batterie. Mes écoutes tournent autour de trois piliers, mais ma playlist dépasse les 3 600 titres et passe du classique aux BO de jeux. Je n’aime pas qu’on me range dans une case.',
+  // Tranches de la console : j'écoute de tout, donc tous les curseurs sont en haut
+  genres: [
+    'Jazz', 'Rock', 'Metal', 'Rap', 'Électro', 'Techno', 'Classique',
+    'Musiques du monde', 'BO de films', 'BO de jeux', 'Danse de salon', 'Reprises',
+  ],
+  // Mettre ici le lien public de la playlist Spotify pour afficher le bouton
+  playlist: { name: 'Souvenir d’enfant', count: '3 600+', spotify: '' as string },
+  text: 'Je chante depuis toute petite, et je joue de la guitare et de la batterie. Côté écoute, je passe de tout à tout, sans étiquette : la musique, pour moi, c’est surtout de la mémoire et de l’émotion.',
 };
 
 export const games = {

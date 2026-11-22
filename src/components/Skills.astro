@@ -1,19 +1,29 @@
 ---
 import { skills } from '../data/cv';
+import SectionHead from './SectionHead.astro';
+
+// Une icône par famille, dans l'ordre de skills
+const icons = [
+  '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
+  '<path d="M4 7h16M4 12h16M4 17h10"/><circle cx="18" cy="17" r="2"/>',
+  '<circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v5M12 12l-6 5M12 12l6 5"/>',
+  '<path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/>',
+  '<path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/>',
+  '<path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/>',
+];
+const tones = ['pro', 'pro', 'pro', 'gold', 'crea', 'crea'];
 ---
 <section class="section" id="competences" aria-labelledby="competences-title">
   <div class="wrap">
-    <div class="section-head reveal">
-      <p class="mono marker">Marqueur 02 · Compétences</p>
-      <h2 id="competences-title">La boîte à outils</h2>
-      <p>Pas de jauges en pourcentage : chaque compétence vient d’un endroit où je l’ai pratiquée.</p>
-    </div>
+    <SectionHead scene={2} label="Compétences" title="La boîte à outils" id="competences-title">
+      Pas de jauges en pourcentage : chaque compétence vient d’un endroit où je l’ai pratiquée.
+    </SectionHead>
     <div class="grid">
       {skills.map((g, i) => (
-        <article class="bin reveal" style={`--d:${i * 60}ms`}>
+        <article class={`bin depth tilt reveal tone-${tones[i]}`} style={`--d:${i * 70}ms`}>
           <header>
+            <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={icons[i]} /></span>
             <h3>{g.group}</h3>
-            <span class="mono">{String(g.items.length).padStart(2, '0')} éléments</span>
           </header>
           <ul>{g.items.map((it) => <li>{it}</li>)}</ul>
           <p class="where mono">Pratiqué : {g.where}</p>
@@ -24,21 +34,34 @@ import { skills } from '../data/cv';
 </section>
 
 <style>
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
   .bin {
-    display: grid; grid-template-rows: auto 1fr auto; gap: 1rem; padding: 1.4rem;
-    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
-    transition-delay: var(--d);
+    --c: var(--pro);
+    position: relative; display: grid; grid-template-rows: auto 1fr auto; gap: 1.1rem; padding: 1.5rem;
+    border-radius: 18px; overflow: hidden; transition-delay: var(--d);
   }
-  .bin header { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
-  .bin h3 { font-size: 1.2rem; }
-  .bin header .mono { font-size: .65rem; }
-  .bin ul { list-style: none; display: flex; flex-wrap: wrap; gap: .45rem; align-content: start; }
+  .tone-gold { --c: var(--gold); }
+  .tone-crea { --c: var(--crea); }
+  .bin::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(400px 180px at 0% 0%, color-mix(in srgb, var(--c) 16%, transparent), transparent 70%);
+  }
+  .bin header { display: flex; align-items: center; gap: .9rem; position: relative; }
+  .ic {
+    width: 44px; height: 44px; flex: none; border-radius: 12px; display: grid; place-items: center; color: var(--c);
+    background: color-mix(in srgb, var(--c) 14%, var(--panel-2)); border: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / .08);
+  }
+  .ic svg { width: 22px; height: 22px; }
+  .bin h3 { font-size: 1.25rem; }
+  .bin ul { list-style: none; display: flex; flex-wrap: wrap; gap: .45rem; align-content: start; position: relative; }
   .bin li {
-    font-size: .88rem; padding: .3rem .7rem; border-radius: 8px;
-    background: var(--panel-2); border: 1px solid var(--line);
+    font-size: .88rem; padding: .32rem .72rem; border-radius: 8px;
+    background: linear-gradient(180deg, #ffffff0a, transparent), var(--panel-2); border: 1px solid var(--line);
+    transition: border-color .2s, color .2s;
   }
-  .where { font-size: .66rem; text-transform: none; letter-spacing: .02em; border-top: 1px dashed var(--line); padding-top: .8rem; }
-  @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  .bin li:hover { border-color: var(--c); }
+  .where { font-size: .66rem; text-transform: none; letter-spacing: .02em; border-top: 1px dashed var(--line); padding-top: .8rem; position: relative; }
+  @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
 </style>

@@ -1,0 +1,56 @@
+---
+// En-tête de section façon clap de cinéma
+interface Props { scene: number; label: string; title: string; id: string }
+const { scene, label, title, id } = Astro.props;
+---
+<div class="head reveal">
+  <div class="clap" aria-hidden="true">
+    <div class="clap__stick"></div>
+    <div class="clap__board">
+      <span class="clap__stripes"></span>
+      <dl class="mono">
+        <div><dt>Scène</dt><dd>{String(scene).padStart(2, '0')}</dd></div>
+        <div><dt>Prise</dt><dd>1</dd></div>
+        <div class="wide"><dt>Plan</dt><dd>{label}</dd></div>
+      </dl>
+    </div>
+  </div>
+  <div class="head__text">
+    <h2 id={id}>{title}</h2>
+    <p><slot /></p>
+  </div>
+</div>
+
+<style>
+  .head { display: flex; align-items: flex-end; gap: clamp(1.2rem, 3vw, 2.4rem); margin-bottom: 2.6rem; }
+  .head__text { display: grid; gap: .7rem; }
+  h2 { font-size: clamp(2rem, 4.8vw, 3.4rem); }
+  p { color: var(--muted); max-width: 60ch; }
+
+  .clap { width: 190px; flex: none; perspective: 600px; }
+  .clap__stick, .clap__stripes {
+    background: repeating-linear-gradient(-45deg, var(--gold) 0 14px, #12141b 14px 28px);
+  }
+  .clap__stick {
+    height: 22px; border-radius: 4px 4px 0 0; transform-origin: 4px 100%;
+    transform: rotate(-18deg); box-shadow: 0 6px 12px rgb(0 0 0 / .4);
+  }
+  .clap__board { margin-top: 3px; background: #12141b; border: 1px solid var(--line); border-radius: 0 0 8px 8px; overflow: hidden; }
+  .clap__stripes { display: block; height: 14px; }
+  .clap dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; font-size: .62rem; }
+  .clap dl div { padding: .45rem .6rem; border-top: 1px solid var(--line); }
+  .clap dl div + div { border-left: 1px solid var(--line); }
+  .clap dl .wide { grid-column: span 2; border-left: 0; }
+  .clap dt { color: var(--muted); }
+  .clap dd { margin: 0; color: var(--text); font-size: .9rem; font-weight: 600; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .reveal .clap__stick { transition: transform .35s cubic-bezier(.6,-0.2,.7,1.4) .35s; }
+    :global(.js) .reveal.is-in .clap__stick { transform: rotate(0deg); }
+  }
+  @media (prefers-reduced-motion: reduce) { .clap__stick { transform: none; } }
+  @media (max-width: 640px) {
+    .head { flex-direction: column; align-items: flex-start; }
+    .clap { width: 150px; }
+  }
+</style>

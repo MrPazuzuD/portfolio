@@ -1,39 +1,105 @@
 ---
 import { projects } from '../data/cv';
 import Icon from './Icon.astro';
+import SectionHead from './SectionHead.astro';
+
+// Décor en blocs pour Miratopia (motif fixe, généré à la construction)
+const sky = ['#1b2a4a', '#22345a', '#2a3f69'];
+const vox = Array.from({ length: 16 * 9 }, (_, i) => {
+  const x = i % 16, y = Math.floor(i / 16);
+  const ground = 5 + Math.round(Math.sin(x * 0.7) * 1.2 + Math.cos(x * 0.33));
+  if (y < ground) return sky[(x + y) % 3];
+  if (y === ground) return (x + y) % 2 ? '#4caf50' : '#43a047';
+  if (y === ground + 1) return '#8d6e63';
+  return (x * y) % 3 ? '#6d4c41' : '#5d4037';
+});
+const files = [
+  { n: 'vacances_1998.avi', c: 'DivX → H.264', s: 'ok' },
+  { n: 'anniversaire.avi', c: 'Xvid → H.264', s: 'run' },
+  { n: 'mariage_2004.mkv', c: 'MPEG-4 → H.264', s: 'wait' },
+  { n: 'dessin_anime.avi', c: 'DivX → H.264', s: 'wait' },
+];
+const chat = [
+  { u: 'viewer_42', c: '#7ec8ff', m: 'GG pour le palier des 500 € !' },
+  { u: 'pazuzuuu_', c: '#a98bff', m: 'Merci à tous, on continue 💜', mod: true },
+  { u: 'spam_bot', c: '#ff8f8f', m: '', del: true },
+  { u: 'lunaire', c: '#ffd27e', m: 'Don de 10 € pour l’asso !', don: true },
+  { u: 'kevin_88', c: '#8fffc1', m: 'Le clip du boss était énorme' },
+];
 ---
 <section class="section" id="projets" aria-labelledby="projets-title">
   <div class="wrap">
-    <div class="section-head reveal">
-      <p class="mono marker">Marqueur 03 · Projets</p>
-      <h2 id="projets-title">Ce que je fabrique</h2>
-      <p>Des projets nés d’un vrai besoin ou d’une bande de copains.</p>
-    </div>
+    <SectionHead scene={3} label="Projets" title="Ce que je fabrique" id="projets-title">
+      Des projets nés d’un vrai besoin ou d’une bande de copains.
+    </SectionHead>
 
     <div class="list">
       {projects.map((p, i) => (
-        <article class={`proj reveal ${p.youtube ? 'proj--video' : ''}`} id={`projet-${p.id}`}>
+        <article class="proj depth reveal" id={`projet-${p.id}`}>
           <div class="proj__text">
             <p class="mono proj__meta"><span>{String(i + 1).padStart(2, '0')}</span>{p.kind} · {p.year}</p>
             <h3>{p.name}</h3>
             <p class="proj__sum">{p.summary}</p>
-            {p.points.length > 0 && <ul>{p.points.map((x) => <li>{x}</li>)}</ul>}
+            {p.points.length > 0 && <ul class="pts">{p.points.map((x) => <li>{x}</li>)}</ul>}
             <ul class="stack">{p.stack.map((s) => <li class="mono">{s}</li>)}</ul>
             {p.link ? (
               <a class="btn" href={p.link} target="_blank" rel="noopener">{p.linkLabel}<Icon name="arrow" /></a>
             ) : p.linkLabel && <p class="soon mono">{p.linkLabel}</p>}
           </div>
-          {p.youtube && (
-            <div class="player" data-yt={p.youtube.id}>
-              <a class="player__facade" href={`https://www.youtube.com/watch?v=${p.youtube.id}`} target="_blank" rel="noopener">
-                <span class="player__title">{p.name}</span>
-                <span class="player__btn"><Icon name="play" /></span>
-                <span class="player__label mono">Lire la bande-annonce</span>
-                <span class="sr-only">{p.youtube.title} (YouTube)</span>
-              </a>
-              <p class="player__note mono">La vidéo se charge depuis YouTube au clic.</p>
-            </div>
-          )}
+
+          <div class="visual">
+            {p.id === 'video-toolbox' && (
+              <div class="vt tilt" aria-hidden="true">
+                <div class="vt__bar"><span class="dots"><i></i><i></i><i></i></span><b>Video Toolbox</b><span class="vt__gpu mono">GPU · NVENC</span></div>
+                <div class="vt__drop mono">Glissez vos vidéos ici</div>
+                <ul class="vt__files">
+                  {files.map((f) => (
+                    <li class={`vt__row is-${f.s}`}>
+                      <span class="vt__name">{f.n}</span>
+                      <span class="mono vt__codec">{f.c}</span>
+                      <span class="vt__state mono">{f.s === 'ok' ? '✓ Vérifié' : f.s === 'run' ? 'Conversion' : 'En attente'}</span>
+                      {f.s === 'run' && <span class="vt__prog"><i></i></span>}
+                    </li>
+                  ))}
+                </ul>
+                <div class="vt__foot mono"><span>722 fichiers analysés</span><span>Intégrité vérifiée avant corbeille</span></div>
+              </div>
+            )}
+
+            {'youtube' in p && p.youtube && (
+              <div class="player" data-yt={p.youtube.id}>
+                <a class="player__facade" href={`https://www.youtube.com/watch?v=${p.youtube.id}`} target="_blank" rel="noopener">
+                  <span class="vox" aria-hidden="true">{vox.map((c) => <i style={`background:${c}`}></i>)}</span>
+                  <span class="player__shade" aria-hidden="true"></span>
+                  <span class="player__title">{p.name}</span>
+                  <span class="player__btn" aria-hidden="true"><Icon name="play" /></span>
+                  <span class="player__label mono" aria-hidden="true">Bande-annonce</span>
+                  <span class="sr-only">{p.youtube.title} (YouTube)</span>
+                </a>
+                <p class="player__note mono">La vidéo se charge depuis YouTube au clic.</p>
+              </div>
+            )}
+
+            {p.id === 'caritatif' && (
+              <div class="chat tilt" aria-hidden="true">
+                <div class="chat__head"><span class="live mono">● En direct</span><b>Chat du live</b></div>
+                <div class="chat__goal">
+                  <div class="mono"><span>Objectif de dons</span><span>78 %</span></div>
+                  <span class="bar"><i></i></span>
+                </div>
+                <ul class="chat__msgs">
+                  {chat.map((c, k) => (
+                    <li style={`--k:${k}`} class={c.don ? 'is-don' : ''}>
+                      {c.mod && <span class="badge" title="Modératrice">⚔</span>}
+                      <b style={`color:${c.c}`}>{c.u}</b>
+                      {c.del ? <em>message supprimé par un modérateur</em> : <span>{c.m}</span>}
+                    </li>
+                  ))}
+                </ul>
+                <p class="chat__note mono">Illustration</p>
+              </div>
+            )}
+          </div>
         </article>
       ))}
     </div>
@@ -41,42 +107,94 @@ import Icon from './Icon.astro';
 </section>
 
 <style>
-  .list { display: grid; gap: 1.2rem; }
+  .list { display: grid; gap: 1.4rem; }
   .proj {
-    display: grid; gap: 2rem; padding: clamp(1.4rem, 3vw, 2.2rem);
-    background: var(--panel); border: 1px solid var(--line); border-radius: 20px; scroll-margin-top: 100px;
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: center;
+    padding: clamp(1.4rem, 3vw, 2.4rem); border-radius: 22px; scroll-margin-top: 100px; overflow: hidden;
   }
-  .proj--video { grid-template-columns: 1fr 1.15fr; align-items: center; }
+  .proj:nth-child(even) .proj__text { order: 2; }
   .proj__meta { display: flex; gap: .8rem; font-size: .7rem; }
   .proj__meta span { color: var(--gold); }
-  .proj h3 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin: .4rem 0 .8rem; }
+  .proj h3 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); margin: .4rem 0 .8rem; }
   .proj__sum { color: #d5d9e2; max-width: 62ch; }
-  .proj__text > ul:not(.stack) { margin-top: 1rem; padding-left: 1.1rem; display: grid; gap: .35rem; color: #c9cedb; font-size: .96rem; }
+  .pts { margin-top: 1rem; padding-left: 1.1rem; display: grid; gap: .35rem; color: #c9cedb; font-size: .96rem; }
   .stack { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem; margin: 1.2rem 0; }
   .stack li { font-size: .66rem; padding: .25rem .6rem; border: 1px solid var(--line); border-radius: 999px; color: var(--text); }
   .soon { color: var(--gold); font-size: .7rem; }
+  .visual { perspective: 1200px; }
+  .dots { display: flex; gap: 5px; }
+  .dots i { width: 9px; height: 9px; border-radius: 50%; background: #ff5f57; }
+  .dots i:nth-child(2) { background: #febc2e; }
+  .dots i:nth-child(3) { background: #28c840; }
 
+  /* Fenêtre Video Toolbox */
+  .vt { border-radius: 14px; overflow: hidden; background: #f4f5f8; color: #1c2230; border: 1px solid #000;
+    box-shadow: 0 30px 70px -20px rgb(0 0 0 / .8), 0 0 0 1px rgb(255 255 255 / .08); font-size: .82rem; }
+  .vt__bar { display: flex; align-items: center; gap: .8rem; padding: .55rem .8rem; background: linear-gradient(#e9ebf0, #dcdfe6); border-bottom: 1px solid #c6cad4; }
+  .vt__bar b { font-family: var(--font-title); font-size: .85rem; }
+  .vt__gpu { margin-left: auto; font-size: .58rem; padding: .15rem .45rem; border-radius: 5px; background: #76b900; color: #fff; }
+  .vt__drop { margin: .8rem; padding: .9rem; border: 2px dashed #b7bdca; border-radius: 10px; text-align: center; font-size: .62rem; color: #6b7385; }
+  .vt__files { list-style: none; margin: 0 .8rem; display: grid; gap: .35rem; }
+  .vt__row { position: relative; display: grid; grid-template-columns: 1fr auto auto; gap: .8rem; align-items: center;
+    padding: .55rem .7rem; background: #fff; border: 1px solid #e1e4eb; border-radius: 8px; overflow: hidden; }
+  .vt__name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .vt__codec { font-size: .58rem; color: #6b7385; text-transform: none; }
+  .vt__state { font-size: .58rem; padding: .15rem .45rem; border-radius: 5px; background: #eef0f4; color: #6b7385; }
+  .is-ok .vt__state { background: #dff6e7; color: #1b7a3d; }
+  .is-run .vt__state { background: #fff3d1; color: #8a6200; }
+  .vt__prog { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: #e9ecf2; }
+  .vt__prog i { display: block; height: 100%; width: 64%; background: linear-gradient(90deg, #f2b705, #ff9d00); }
+  .vt__foot { display: flex; justify-content: space-between; gap: 1rem; padding: .8rem; font-size: .55rem; color: #6b7385; text-transform: none; }
+
+  /* Lecteur Miratopia */
   .player { display: grid; gap: .6rem; }
   .player__facade, .player :global(iframe) {
     position: relative; display: grid; place-items: center; aspect-ratio: 16 / 9; width: 100%;
-    border-radius: 14px; border: 1px solid var(--line); overflow: hidden; text-decoration: none;
+    border-radius: 14px; border: 1px solid #000; overflow: hidden; text-decoration: none;
+    box-shadow: 0 30px 70px -20px rgb(0 0 0 / .8), 0 0 0 1px rgb(255 255 255 / .08);
   }
-  .player__facade {
-    background:
-      radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--crea) 45%, transparent), transparent 55%),
-      radial-gradient(circle at 80% 80%, color-mix(in srgb, var(--pro) 35%, transparent), transparent 55%),
-      repeating-linear-gradient(0deg, #ffffff06 0 2px, transparent 2px 4px),
-      #10131c;
-  }
-  .player__title { position: absolute; left: 1.2rem; bottom: 1rem; font-family: var(--font-title); font-weight: 700; font-size: clamp(1.4rem, 3vw, 2.2rem); }
-  .player__label { position: absolute; right: 1.2rem; top: 1rem; font-size: .65rem; }
+  .vox { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(16, 1fr); grid-template-rows: repeat(9, 1fr); }
+  .vox i { box-shadow: inset 0 0 0 1px rgb(0 0 0 / .12), inset 2px 2px 0 rgb(255 255 255 / .06); }
+  .player__shade { position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, transparent 20%, rgb(5 8 15 / .75)); }
+  .player__title { position: absolute; left: 1.2rem; bottom: 1rem; font-family: var(--font-title); font-weight: 700; font-size: clamp(1.5rem, 3vw, 2.4rem); text-shadow: 3px 3px 0 #000; }
+  .player__label { position: absolute; right: 1rem; top: 1rem; font-size: .6rem; padding: .25rem .55rem; background: #000a; border-radius: 6px; }
   .player__btn {
-    width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center;
+    position: relative; width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center;
     background: var(--gold); color: #14110a; transition: transform .25s ease;
-    box-shadow: 0 0 0 10px color-mix(in srgb, var(--gold) 18%, transparent);
+    box-shadow: 0 0 0 10px color-mix(in srgb, var(--gold) 22%, transparent), 0 10px 30px rgb(0 0 0 / .6);
   }
-  .player__btn :global(svg) { width: 30px; height: 30px; margin-left: 4px; }
-  .player__facade:hover .player__btn { transform: scale(1.08); }
+  .player__btn :global(svg) { width: 32px; height: 32px; margin-left: 4px; }
+  .player__facade:hover .player__btn { transform: scale(1.1); }
   .player__note { font-size: .62rem; text-transform: none; }
-  @media (max-width: 860px) { .proj--video { grid-template-columns: 1fr; } }
+
+  /* Chat de live */
+  .chat { border-radius: 14px; overflow: hidden; background: #0e0e10; border: 1px solid #000;
+    box-shadow: 0 30px 70px -20px rgb(0 0 0 / .8), 0 0 0 1px rgb(255 255 255 / .08); font-size: .88rem; }
+  .chat__head { display: flex; align-items: center; gap: .8rem; padding: .7rem 1rem; background: #18181b; border-bottom: 1px solid #2a2a2e; }
+  .live { color: #ff4d4f; font-size: .6rem; }
+  .chat__goal { padding: .7rem 1rem; border-bottom: 1px solid #2a2a2e; display: grid; gap: .4rem; }
+  .chat__goal div { display: flex; justify-content: space-between; font-size: .6rem; }
+  .bar { height: 6px; border-radius: 3px; background: #2a2a2e; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 78%; background: linear-gradient(90deg, var(--crea), #ff6ec7); }
+  .chat__msgs { list-style: none; padding: .7rem 1rem; display: grid; gap: .45rem; }
+  .chat__msgs li { line-height: 1.4; }
+  .chat__msgs b { margin-right: .35rem; }
+  .chat__msgs em { color: #77777f; font-size: .82rem; }
+  .chat__msgs .is-don { padding: .45rem .6rem; border-radius: 8px; background: color-mix(in srgb, var(--crea) 22%, #0e0e10); border-left: 3px solid var(--crea); }
+  .badge { display: inline-grid; place-items: center; width: 18px; height: 18px; margin-right: .3rem; border-radius: 4px; background: #00ad03; color: #fff; font-size: .7rem; vertical-align: -3px; }
+  .chat__note { padding: 0 1rem .7rem; font-size: .55rem; color: #55555c; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .vt__prog i { animation: prog 3.2s ease-in-out infinite; }
+    @keyframes prog { from { width: 8%; } to { width: 96%; } }
+    :global(.js) .reveal .chat__msgs li { opacity: 0; transform: translateY(8px); }
+    :global(.js) .reveal.is-in .chat__msgs li { animation: msg .45s ease forwards; animation-delay: calc(.4s + var(--k) * .55s); }
+    @keyframes msg { to { opacity: 1; transform: none; } }
+    :global(.js) .reveal.is-in .bar i { animation: goal 1.6s 2.4s ease both; }
+    @keyframes goal { from { width: 40%; } }
+  }
+  @media (max-width: 860px) {
+    .proj { grid-template-columns: 1fr; }
+    .proj:nth-child(even) .proj__text { order: 0; }
+  }
 </style>

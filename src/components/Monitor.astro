@@ -4,7 +4,7 @@ import Icon from './Icon.astro';
 ---
 <section class="hero" id="top" aria-labelledby="hero-title">
   <div class="wrap">
-    <div class="monitor">
+    <div class="monitor depth">
       <div class="monitor__top mono" aria-hidden="true">
         <span><span class="rec"></span>Programme</span>
         <span class="hide-sm">marine_rimpot_2026.prproj</span>
@@ -39,6 +39,7 @@ import Icon from './Icon.astro';
         </div>
       </div>
 
+      <p class="subs" aria-hidden="true"><span data-subs>[Bruit de clavier]</span></p>
       <div class="transport mono" aria-hidden="true">
         <span class="tc" data-tc>00:00:00:00</span>
         <span class="controls"><i>⏮</i><i class="play">▶</i><i>⏭</i></span>
@@ -51,7 +52,7 @@ import Icon from './Icon.astro';
 <style>
   .hero { padding: clamp(1.5rem, 4vw, 3rem) 0 2rem; }
   .monitor {
-    border: 1px solid var(--line); border-radius: 20px; background: var(--bg-2);
+    position: relative; border-radius: 20px;
     box-shadow: 0 40px 120px -40px rgb(0 0 0 / .8), inset 0 1px 0 rgb(255 255 255 / .04);
     overflow: hidden;
   }
@@ -68,7 +69,7 @@ import Icon from './Icon.astro';
   @keyframes blink { to { visibility: hidden; } }
 
   .screen {
-    position: relative; padding: clamp(2.5rem, 7vw, 5.5rem) clamp(1.25rem, 6vw, 5rem);
+    position: relative; padding: clamp(2.5rem, 7vw, 5.5rem) clamp(1.25rem, 6vw, 5rem) clamp(3rem, 8vw, 6.5rem);
     background:
       radial-gradient(1200px 500px at 85% -10%, color-mix(in srgb, var(--crea) 22%, transparent), transparent 60%),
       radial-gradient(900px 500px at -10% 110%, color-mix(in srgb, var(--pro) 16%, transparent), transparent 60%),
@@ -90,7 +91,15 @@ import Icon from './Icon.astro';
   .screen__inner { position: relative; display: grid; gap: 1.2rem; }
   .photo { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); }
   .eyebrow { color: var(--gold); font-size: .85rem; }
-  h1 { font-size: clamp(3.2rem, 11vw, 8.5rem); font-weight: 700; letter-spacing: -0.045em; line-height: .92; }
+  h1 { font-size: clamp(3.2rem, 11vw, 8.5rem); font-weight: 700; letter-spacing: -0.045em; line-height: .92; text-shadow: 0 12px 40px rgb(0 0 0 / .6); }
+  @media (prefers-reduced-motion: no-preference) {
+    h1:hover .line { animation: rgb .5s steps(2) 2; }
+    @keyframes rgb {
+      0% { text-shadow: 3px 0 #ff3b5c, -3px 0 #3cc7b5; transform: translateX(1px); }
+      50% { text-shadow: -4px 0 #ff3b5c, 4px 0 #a98bff; transform: translateX(-2px); }
+      100% { text-shadow: none; transform: none; }
+    }
+  }
   .line { display: block; }
   .line--gold { color: var(--gold); }
   .pitch { font-size: clamp(1.1rem, 2.2vw, 1.4rem); max-width: 36ch; color: #d5d9e2; }
@@ -100,6 +109,16 @@ import Icon from './Icon.astro';
   .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--pro); box-shadow: 0 0 0 4px color-mix(in srgb, var(--pro) 25%, transparent); }
   .cta { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: .6rem; }
 
+  .subs {
+    position: absolute; left: 50%; bottom: 66px; translate: -50% 0; z-index: 2; margin: 0;
+    max-width: 90%; text-align: center; pointer-events: none;
+  }
+  .subs span {
+    display: inline-block; padding: .25rem .7rem; border-radius: 4px; background: rgb(0 0 0 / .72);
+    color: #fff; font-size: clamp(.8rem, 1.6vw, .95rem); font-weight: 500; transition: opacity .3s;
+  }
+  .subs span.is-out { opacity: 0; }
+  @media (max-width: 960px) { .subs { display: none; } }
   .tc { color: var(--text); font-variant-numeric: tabular-nums; }
   .controls { display: flex; gap: 1.2rem; font-style: normal; }
   .controls i { font-style: normal; opacity: .6; }
