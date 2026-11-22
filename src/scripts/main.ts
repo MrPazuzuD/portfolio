@@ -189,10 +189,12 @@ if (tl) {
     return n + Math.max(1, (end[0] - ys) * 12 + (end[1] - ms) + (x.e ? 1 : 0));
   }, 0);
   let current = '';
-  const select = (id: string) => {
+  const visited = new Set<string>();
+  const select = (id: string, user = true) => {
     const c = data[id];
     if (!c) return;
     current = id;
+    if (user) { visited.add(id); if (order.every((o) => visited.has(o))) unlock('rush'); }
     tl.querySelectorAll('.clip').forEach((el) => el.classList.toggle('is-selected', (el as HTMLElement).dataset.clip === id));
     insp.dataset.k = c.k;
     field('lane').textContent = c.lane;
@@ -237,7 +239,7 @@ if (tl) {
       if (id === 'bt-musique') unlock('sources');
     });
   });
-  select(tl.querySelector<HTMLElement>('.clip--pro.clip--live')?.dataset.clip ?? '');
+  select(tl.querySelector<HTMLElement>('.clip--pro.clip--live')?.dataset.clip ?? '', false);
 }
 
 // 8. Sous-titres de l'accueil
@@ -307,7 +309,7 @@ if (strips) {
         val = Math.max(-135, Math.min(135, Math.round(v)));
         st.style.setProperty('--r', `${val}deg`);
         knob.setAttribute('aria-valuenow', String(val));
-        unlock('mix');
+        unlock('pan');
       };
       knob.addEventListener('pointerdown', (e) => { e.preventDefault(); startY = e.clientY; startV = val; moved = false; knob.setPointerCapture(e.pointerId); });
       knob.addEventListener('pointermove', (e) => {
@@ -326,7 +328,7 @@ if (strips) {
   strips.querySelector<HTMLInputElement>('[data-master]')?.addEventListener('input', (e) => {
     const v = (e.target as HTMLInputElement).value;
     strips.style.setProperty('--master', v);
-    unlock('mix');
+    unlock('master');
     if (Number(v) === 0) unlock('mute');
   });
 }
@@ -354,6 +356,8 @@ gameBtns.forEach((b, i) => {
     if (!on) return;
     played.add(i);
     unlock('play');
+    const favs = [...gameBtns].map((g, k) => (g.closest('.case--fav') ? k : -1)).filter((k) => k >= 0);
+    if (favs.length && favs.every((k) => played.has(k))) unlock('trio');
     if (played.size === gameBtns.length) unlock('collector');
   });
 });
@@ -370,6 +374,14 @@ document.querySelectorAll<HTMLElement>('[data-zoom-img]').forEach((b) => b.addEv
 }));
 zoomDlg?.querySelector('[data-zoom-close]')?.addEventListener('click', () => zoomDlg.close());
 zoomDlg?.addEventListener('click', (e) => { if (e.target === zoomDlg) zoomDlg.close(); });
+
+// 11 ter. Salle de projection : regarder toutes les affiches (survol ou toucher)
+const posters = [...document.querySelectorAll<HTMLElement>('.poster')];
+const seenPosters = new Set<number>();
+posters.forEach((p, i) => p.addEventListener('pointerenter', () => {
+  seenPosters.add(i);
+  if (seenPosters.size === posters.length) unlock('cinephile');
+}));
 
 // 12. Liens suivis
 document.addEventListener('click', (e) => {
