@@ -10,6 +10,8 @@ export interface Clip {
   lane: string;
   title: string;
   org: string;
+  /** Libellé court affiché sur la timeline */
+  short?: string;
   place?: string;
   /** Format AAAA-MM. `end: null` = en cours */
   start: string;
@@ -71,6 +73,7 @@ export const experiences: Clip[] = [
     lane: 'V1',
     title: 'Technicienne support & systèmes',
     org: 'Préfecture des Vosges, SIDSIC',
+    short: 'SIDSIC',
     place: 'Épinal',
     start: '2022-09',
     end: '2024-08',
@@ -89,6 +92,7 @@ export const experiences: Clip[] = [
     lane: 'V1',
     title: 'Mise en rayon et inventaire',
     org: 'E.Leclerc',
+    short: 'Leclerc',
     place: 'Neufchâteau',
     start: '2021-07',
     end: '2021-09',
@@ -102,6 +106,7 @@ export const experiences: Clip[] = [
     lane: 'V1',
     title: 'Préparation de commandes',
     org: 'Alterboutique',
+    short: 'Alterboutique',
     place: 'Toul',
     start: '2018-07',
     end: '2018-08',
@@ -116,6 +121,7 @@ export const experiences: Clip[] = [
     lane: 'V1',
     title: 'Animatrice enfants',
     org: 'MJC Beauregard',
+    short: 'MJC',
     place: 'Nancy',
     start: '2019-09',
     end: '2020-07',
@@ -144,6 +150,7 @@ export const formations: Clip[] = [
     lane: 'V2',
     title: 'Études de psychologie',
     org: 'Université de Lorraine',
+    short: 'Psychologie',
     place: 'Nancy',
     start: '2017-09',
     end: '2021-06',
@@ -159,6 +166,7 @@ export const formations: Clip[] = [
     lane: 'V2',
     title: 'Baccalauréat santé et social',
     org: 'Lycée Arthur Varoquaux',
+    short: 'Arthur Varoquaux',
     place: 'Tomblaine',
     start: '2014-09',
     end: '2017-07',
@@ -172,6 +180,7 @@ export const formations: Clip[] = [
     lane: 'V2',
     title: 'Brevet de technicien des métiers de la musique',
     org: 'Lycée Claude Daunot',
+    short: 'Claude Daunot',
     place: 'Nancy',
     start: '2010-09',
     end: '2013-07',
