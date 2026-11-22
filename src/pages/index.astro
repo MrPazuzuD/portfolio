@@ -9,6 +9,7 @@ import HorsChamp from '../components/HorsChamp.astro';
 import Contact from '../components/Contact.astro';
 import Achievements from '../components/Achievements.astro';
 import Waves from '../components/Waves.astro';
+import Cut from '../components/Cut.astro';
 import { profile } from '../data/cv';
 ---
 <Base
@@ -20,10 +21,15 @@ import { profile } from '../data/cv';
   <Header />
   <main id="main">
     <Monitor />
+    <Cut kind="film" tone="pro" tilt={-2} words={['Support N1/N2', 'Windows', 'Debian', 'Active Directory', 'GLPI', 'WAPT', 'PowerShell', 'Python', 'Pédagogie']} />
     <Timeline />
+    <Cut kind="eq" tone="pro" from={1} to={2} />
     <Skills />
+    <Cut kind="film" tone="gold" tilt={1.5} words={['Video Toolbox', 'Miratopia', 'Lives caritatifs', 'Modération', 'Création de contenu', 'Idées concrètes']} />
     <Projects />
+    <Cut kind="eq" tone="crea" from={3} to={4} />
     <HorsChamp />
+    <Cut kind="film" tone="crea" tilt={-1.5} words={['Chant', 'Guitare', 'Batterie', 'Montage', 'Red Dead Redemption 2', 'Hunt: Showdown 1896', 'Jazz', 'Metal', 'Techno']} />
     <Contact />
   </main>
   <Achievements />

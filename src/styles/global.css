@@ -78,7 +78,7 @@ ul { margin: 0; padding: 0; }
 .btn svg { width: 18px; height: 18px; flex: none; }
 
 /* En-tête de section façon marqueur de montage */
-.section { padding: clamp(4rem, 9vw, 7rem) 0; }
+.section { padding: clamp(2.5rem, 5vw, 4rem) 0; }
 .section-head { display: grid; gap: .6rem; margin-bottom: 2.5rem; }
 .marker { display: inline-flex; align-items: center; gap: .6rem; }
 .marker::before {
