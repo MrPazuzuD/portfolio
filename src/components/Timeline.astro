@@ -112,7 +112,7 @@ const order = [...experiences, ...formations].map((c) => c.id);
             <div><dt>Période</dt><dd data-i="d">{first.period}</dd></div>
             <div><dt>Durée</dt><dd data-i="dur">{first.dur ?? (first.track === 'formation' ? `${Math.round(durOf(first) / 12)} ans` : fmtDur(durOf(first)))}</dd></div>
             <div><dt>Lieu</dt><dd data-i="p">{first.place ?? '—'}</dd></div>
-            <div><dt>Statut</dt><dd><span class={`tag ${first.tag && /obtenu/i.test(first.tag) ? 'tag--ok' : ''}`} data-i="g">{first.tag}</span></dd></div>
+            <div><dt>Statut</dt><dd><span class={`tag ${first.tag && /obtenu/i.test(first.tag) ? 'tag--ok' : ''}`} data-i="g" hidden={!first.tag}>{first.tag}</span><span data-i="gnone" hidden={!!first.tag}>—</span></dd></div>
           </dl>
           </div>
           <div class="insp__pts" data-i="ptsbox">
@@ -265,6 +265,7 @@ const order = [...experiences, ...formations].map((c) => c.id);
   .insp__props { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1.4rem; font-size: .7rem; padding-top: .9rem; border-top: 1px solid var(--line); }
   .insp__props div { display: grid; gap: .2rem; padding: .45rem 0; border-bottom: 1px dashed #ffffff0f; }
   .insp__props .tag { white-space: nowrap; display: inline-block; }
+  .insp__props [hidden] { display: none !important; }
   .insp__props dt { color: var(--muted); }
   .insp__props dd { margin: 0; color: var(--text); text-transform: none; letter-spacing: .02em; }
   .insp__pts { border-left: 1px solid var(--line); padding-left: 1.2rem; }

@@ -206,6 +206,8 @@ if (tl) {
     field('dur').textContent = c.dur || (c.k === 'formation' && yrs > 0 ? `${yrs} an${yrs > 1 ? 's' : ''}` : fmtDuree(n));
     field('p').textContent = c.p || '—';
     field('g').textContent = /obtenu/i.test(c.g) ? `✓ ${c.g}` : c.g;
+    field('g').hidden = !c.g;
+    field('gnone').hidden = !!c.g;
     field('g').classList.toggle('tag--ok', /obtenu/i.test(c.g));
     field('ptk').textContent = c.k === 'formation' ? 'Détails' : 'Missions';
     field('pts').innerHTML = '';

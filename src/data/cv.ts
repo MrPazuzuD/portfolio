@@ -130,6 +130,7 @@ export const experiences: Clip[] = [
     start: '2019-09',
     end: '2020-07',
     period: 'Sept. 2019 – juil. 2020',
+    tag: 'CDD',
     points: ['Préparation et animation d’activités pour des groupes d’enfants'],
   },
 ];
