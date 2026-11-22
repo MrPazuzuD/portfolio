@@ -111,7 +111,7 @@ export const experiences: Clip[] = [
     start: '2018-07',
     end: '2018-08',
     more: [{ start: '2026-08', end: '2026-09' }],
-    period: 'Juil. 2018 · août – sept. 2026',
+    period: 'Août – sept. 2026 · juil. 2018',
     tag: 'Saisonnier',
     points: ['Préparation et expédition des commandes'],
   },
@@ -190,7 +190,9 @@ export const formations: Clip[] = [
 ];
 
 // Toujours du plus récent au plus ancien, quel que soit l'ordre de saisie
-for (const list of [experiences, formations]) list.sort((a, b) => b.start.localeCompare(a.start));
+// (pour un poste occupé plusieurs fois, c'est le passage le plus récent qui compte)
+const lastStart = (c: Clip) => [c.start, ...(c.more ?? []).map((m) => m.start)].sort().at(-1)!;
+for (const list of [experiences, formations]) list.sort((a, b) => lastStart(b).localeCompare(lastStart(a)));
 
 // Pistes "créa" : affichées sur la timeline, détaillées dans Projets et Hors champ
 export const creaClips: Clip[] = [

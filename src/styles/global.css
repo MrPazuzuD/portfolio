@@ -43,7 +43,7 @@ body {
 
 img { max-width: 100%; display: block; }
 a { color: inherit; }
-h1, h2, h3 { font-family: var(--font-title); line-height: 1.1; margin: 0; letter-spacing: -0.02em; }
+h1, h2, h3, h4 { font-family: var(--font-title); line-height: 1.1; margin: 0; letter-spacing: -0.02em; }
 p { margin: 0; }
 ul { margin: 0; padding: 0; }
 
