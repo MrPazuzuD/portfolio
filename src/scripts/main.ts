@@ -25,18 +25,25 @@ addEventListener('scroll', () => {
 }, { passive: true });
 onScroll();
 
-// 2. Lien actif dans la navigation
+// 2. Lien actif dans la navigation : la dernière section dont le haut a passé le tiers de l'écran
 const navLinks = new Map<string, HTMLElement>();
 document.querySelectorAll<HTMLElement>('[data-nav]').forEach((a) => navLinks.set(a.dataset.nav!, a));
-const spy = new IntersectionObserver((entries) => {
-  entries.forEach((e) => {
-    if (e.isIntersecting) {
-      navLinks.forEach((a) => a.classList.remove('is-active'));
-      navLinks.get(e.target.id)?.classList.add('is-active');
-    }
-  });
-}, { rootMargin: '-45% 0px -50% 0px' });
-navLinks.forEach((_, id) => { const s = document.getElementById(id); if (s) spy.observe(s); });
+const navSections = [...navLinks.keys()].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+let activeId = '';
+function updateNav() {
+  const line = innerHeight * 0.35;
+  let current = '';
+  for (const sec of navSections) if (sec.getBoundingClientRect().top <= line) current = sec.id;
+  // Tout en bas de la page, la dernière section est active même si elle est courte
+  if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) current = navSections.at(-1)?.id ?? current;
+  if (current === activeId) return;
+  activeId = current;
+  navLinks.forEach((a, id) => a.classList.toggle('is-active', id === current));
+}
+let navTick = false;
+addEventListener('scroll', () => { if (!navTick) { navTick = true; requestAnimationFrame(() => { updateNav(); navTick = false; }); } }, { passive: true });
+addEventListener('resize', updateNav);
+updateNav();
 
 // 3. Apparition des blocs au défilement
 const reveals = document.querySelectorAll('.reveal');
