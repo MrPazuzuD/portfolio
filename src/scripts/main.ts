@@ -183,7 +183,8 @@ if (tl) {
     d.textContent = c.d;
     delete d.dataset.base;
     if (c.since) { d.dataset.since = c.since; stampSince(insp); } else delete d.dataset.since;
-    field('g').textContent = c.g;
+    field('g').textContent = /obtenu/i.test(c.g) ? `✓ ${c.g}` : c.g;
+    field('g').classList.toggle('tag--ok', /obtenu/i.test(c.g));
     field('pts').innerHTML = '';
     c.pts.forEach((p: string) => { const li = document.createElement('li'); li.textContent = p; field('pts').append(li); });
     insp.classList.remove('is-swap'); void insp.offsetWidth; insp.classList.add('is-swap');

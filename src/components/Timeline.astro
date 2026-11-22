@@ -84,7 +84,7 @@ const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org,
         <p class="mono insp__k">Inspecteur</p>
         <div class="insp__body">
           <div>
-            <p class="mono insp__meta"><span data-i="d" data-since={first.end ? undefined : first.start}>{first.period}</span><span class="tag" data-i="g">{first.tag}</span></p>
+            <p class="mono insp__meta"><span data-i="d" data-since={first.end ? undefined : first.start}>{first.period}</span><span class={`tag ${first.tag && /obtenu/i.test(first.tag) ? 'tag--ok' : ''}`} data-i="g">{first.tag}</span></p>
             <h3 data-i="t">{first.title}</h3>
             <p class="insp__org" data-i="o">{first.org} · {first.place}</p>
           </div>
@@ -103,7 +103,7 @@ const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org,
               <li class={`card card--${c.track} depth reveal`} id={`clip-${c.id}`}>
                 <div class="card__meta mono">
                   <span data-since={c.end ? undefined : c.start}>{c.period}</span>
-                  {c.tag && <span class="tag">{c.tag}</span>}
+                  {c.tag && <span class={`tag ${/obtenu/i.test(c.tag) ? 'tag--ok' : ''}`}>{/obtenu/i.test(c.tag) && <span aria-hidden="true">✓ </span>}{c.tag}</span>}
                 </div>
                 <h4>{c.title}</h4>
                 <p class="card__org">{c.org}{c.place && <span> · {c.place}</span>}</p>
@@ -222,6 +222,11 @@ const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org,
   @keyframes swap { from { opacity: 0; transform: translateY(6px); } }
   .tag { color: var(--text); border: 1px solid var(--line); border-radius: 999px; padding: .05rem .55rem; text-transform: none; }
   .tag:empty { display: none; }
+  /* Diplôme obtenu : badge vert plein, comme sur le CV */
+  .tag--ok {
+    color: #06240f; background: linear-gradient(180deg, #7be495, #4cc46a); border-color: #2e9a4b;
+    font-weight: 700; box-shadow: 0 0 0 3px rgb(76 196 106 / .18), 0 4px 12px -4px rgb(76 196 106 / .6);
+  }
 
   .cols { display: grid; grid-template-columns: 1.25fr 1fr; gap: 2.5rem; }
   .col-title { margin-bottom: 1rem; }
