@@ -147,7 +147,7 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
         </div>
         <ul class="games">
           {games.map((g) => (
-            <li class={`case ${g.fav ? 'case--fav' : ''}`}>
+            <li class={`case ${g.fav ? 'case--fav' : ''} ${g.showTitle ? 'case--titled' : ''}`}>
               <button type="button" class="case__btn tilt" data-game aria-pressed="false">
                 <img src={g.cover} alt="" width={g.fav ? 600 : 360} height={g.fav ? 900 : 540} loading="lazy" decoding="async" />
                 {g.fav && <span class="star mono">★ Favori</span>}
@@ -373,7 +373,9 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
   @media (max-width: 860px) { .posters { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   @media (max-width: 520px) { .posters { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; } }
   @media (hover: none) { .poster__cap { opacity: 1; transform: none; } .poster img { filter: brightness(.75); } }
-  @media (min-width: 861px) { .case--more { grid-column: span 3; } }
+  @media (min-width: 861px) { .case--more { grid-column: span 4; } }
+  .case--titled .case__title { opacity: 1; transform: none; font-size: 1.05rem; letter-spacing: .04em; text-transform: uppercase; }
+  .case--titled .case__btn::after { opacity: 1; }
   .lib { display: grid; gap: .45rem; }
   .more__n { display: block; font-family: var(--font-title); font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--text); }
   .stats { display: flex; align-items: baseline; flex-wrap: wrap; gap: .4rem 1.1rem; color: var(--muted); font-size: .9rem; }
@@ -398,8 +400,8 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
     .fader { height: 130px; }
     .games { grid-template-columns: repeat(6, minmax(0, 1fr)); }
     .case { grid-column: span 2; }
-    .case--fav { grid-column: span 3; grid-row: auto; aspect-ratio: 2 / 3; }
-    .case--more { grid-column: span 4; aspect-ratio: auto; }
+    .case--fav { grid-column: span 2; grid-row: auto; aspect-ratio: 2 / 3; }
+    .case--more { grid-column: span 2; aspect-ratio: 2 / 3; }
   }
   @media (max-width: 520px) {
     .strips { grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 10px; }

@@ -346,10 +346,11 @@ export const steamStats = { games: 346, dlc: 441 };
 export const games = [
   { name: 'Red Dead Redemption 2', cover: '/games/rdr2.webp', fav: true },
   { name: 'Hunt: Showdown 1896', cover: '/games/hunt.webp', fav: true },
+  { name: 'Cyberpunk 2077', cover: '/games/cyberpunk.webp', fav: true },
   { name: 'Satisfactory', cover: '/games/satisfactory.webp' },
   { name: 'Subnautica 2', cover: '/games/subnautica2.webp' },
-  { name: 'Cyberpunk 2077', cover: '/games/cyberpunk.webp' },
-  { name: 'Overwatch', cover: '/games/overwatch.webp' },
+  // Jaquette recadrée sans l'ancien logo « Overwatch 2 » : le titre est affiché en permanence
+  { name: 'Overwatch', cover: '/games/overwatch.webp', showTitle: true },
   { name: 'Dead by Daylight', cover: '/games/dbd.webp' },
   { name: 'Rust', cover: '/games/rust.webp' },
   { name: 'ARC Raiders', cover: '/games/arc.webp' },
@@ -357,9 +358,11 @@ export const games = [
   { name: 'Eco', cover: '/games/eco.webp' },
   { name: '007 First Light', cover: '/games/007.webp' },
   { name: 'The Wolf Among Us', cover: '/games/wolf.webp' },
+  { name: 'Les Life is Strange', cover: '/games/lis.webp' },
+  { name: 'The Dark Pictures', cover: '/games/darkpictures.webp' },
   { name: 'Age of Empires IV', cover: '/games/aoe4.webp' },
   { name: 'Planet Zoo', cover: '/games/planetzoo.webp' },
-] as { name: string; cover: string; fav?: boolean }[];
+] as { name: string; cover: string; fav?: boolean; showTitle?: boolean }[];
 
 // Affiches : visuels officiels (Wikipédia), recadrés et optimisés dans public/films/
 export const films = [
