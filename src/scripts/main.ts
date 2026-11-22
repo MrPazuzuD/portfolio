@@ -300,7 +300,7 @@ if (strips) {
         knob.setAttribute('aria-valuenow', String(val));
         unlock('mix');
       };
-      knob.addEventListener('pointerdown', (e) => { startY = e.clientY; startV = val; moved = false; knob.setPointerCapture(e.pointerId); });
+      knob.addEventListener('pointerdown', (e) => { e.preventDefault(); startY = e.clientY; startV = val; moved = false; knob.setPointerCapture(e.pointerId); });
       knob.addEventListener('pointermove', (e) => {
         if (!knob.hasPointerCapture(e.pointerId)) return;
         const dy = startY - e.clientY;

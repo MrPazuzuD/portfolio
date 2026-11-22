@@ -100,6 +100,7 @@ const order = [...experiences, ...formations].map((c) => c.id);
           </span>
         </div>
         <div class="insp__body">
+          <div class="insp__main">
           <div class="insp__id">
             <span class="insp__thumb" data-i="thumb" aria-hidden="true">{(first.short ?? first.org).slice(0, 1)}</span>
             <div>
@@ -113,6 +114,7 @@ const order = [...experiences, ...formations].map((c) => c.id);
             <div><dt>Lieu</dt><dd data-i="p">{first.place ?? '—'}</dd></div>
             <div><dt>Statut</dt><dd><span class={`tag ${first.tag && /obtenu/i.test(first.tag) ? 'tag--ok' : ''}`} data-i="g">{first.tag}</span></dd></div>
           </dl>
+          </div>
           <div class="insp__pts" data-i="ptsbox">
             <p class="mono insp__ptk" data-i="ptk">Missions</p>
             <ul data-i="pts">{first.points.map((p) => <li>{p}</li>)}</ul>
@@ -249,18 +251,20 @@ const order = [...experiences, ...formations].map((c) => c.id);
   .insp__nav { margin-left: auto; display: inline-flex; align-items: center; gap: .5rem; color: var(--muted); }
   .insp__nav button { width: 28px; height: 26px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel-2); color: var(--text); cursor: pointer; font-size: .7rem; }
   .insp__nav button:hover { border-color: var(--c); color: var(--c); }
-  .insp__body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr) minmax(0, 1.4fr); gap: 1.6rem; align-items: start; padding: 1.3rem 1.4rem 1.5rem; }
+  .insp__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 1.8rem; align-items: start; padding: 1.3rem 1.4rem 1.5rem; }
+  .insp__main { display: grid; gap: 1.1rem; }
   .insp__id { display: flex; gap: 1rem; align-items: flex-start; }
   .insp__thumb {
     width: 64px; height: 64px; flex: none; border-radius: 12px; display: grid; place-items: center;
     font: 700 1.7rem var(--font-title); color: #0b0d13;
     background: linear-gradient(135deg, color-mix(in srgb, var(--c) 70%, #fff), var(--c) 55%, color-mix(in srgb, var(--c) 60%, #000));
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / .4), 0 10px 24px -10px var(--c);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / .4), 0 6px 14px -10px color-mix(in srgb, var(--c) 60%, transparent);
   }
   .insp h3 { font-size: 1.35rem; line-height: 1.2; }
   .insp__org { color: color-mix(in srgb, var(--c) 70%, var(--muted)); margin-top: .3rem; }
-  .insp__props { margin: 0; display: grid; gap: .1rem; font-size: .7rem; border-left: 1px solid var(--line); padding-left: 1.2rem; }
-  .insp__props div { display: grid; grid-template-columns: 5.5rem 1fr; gap: .6rem; align-items: center; padding: .35rem 0; border-bottom: 1px dashed #ffffff0f; }
+  .insp__props { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1.4rem; font-size: .7rem; padding-top: .9rem; border-top: 1px solid var(--line); }
+  .insp__props div { display: grid; gap: .2rem; padding: .45rem 0; border-bottom: 1px dashed #ffffff0f; }
+  .insp__props .tag { white-space: nowrap; display: inline-block; }
   .insp__props dt { color: var(--muted); }
   .insp__props dd { margin: 0; color: var(--text); text-transform: none; letter-spacing: .02em; }
   .insp__pts { border-left: 1px solid var(--line); padding-left: 1.2rem; }
@@ -297,7 +301,7 @@ const order = [...experiences, ...formations].map((c) => c.id);
 
   @media (max-width: 860px) {
     .cols, .insp__body { grid-template-columns: 1fr; }
-    .insp__props, .insp__pts { border-left: 0; padding-left: 0; }
+    .insp__pts { border-left: 0; padding-left: 0; }
     .tl__heads { width: 92px; }
     .tl__head span, .ico { display: none; }
     .zoom input { display: none; }
