@@ -282,7 +282,7 @@ export const music = {
     'Musiques du monde', 'BO de films', 'BO de jeux', 'Danse de salon', 'Reprises',
   ],
   // Mettre ici le lien public de la playlist Spotify pour afficher le bouton
-  playlist: { name: 'Souvenir d’enfant', count: '3 600+', spotify: '' as string },
+  playlist: { name: 'Souvenir d’enfant', count: '3 600+', spotify: 'https://open.spotify.com/playlist/3zofhGkDNWlSXyc4t15vP5' as string },
   text: 'Je chante depuis toute petite, et je joue de la guitare et de la batterie. Côté écoute, je passe de tout à tout, sans étiquette : la musique, pour moi, c’est surtout de la mémoire et de l’émotion.',
 };
 
