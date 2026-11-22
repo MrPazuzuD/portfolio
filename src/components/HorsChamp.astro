@@ -57,13 +57,18 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
     <div class="duo">
       <!-- Montage -->
       <article class="tile tile--edit depth reveal">
-        <p class="mono k">V3 · Montage & stream</p>
+        <p class="mono k">V3 · Montage</p>
         <div class="games__head">
           <h3>Je monte depuis 2020</h3>
           <p class="tool"><img src="/davinci-resolve.png" alt="" width="128" height="128" loading="lazy" decoding="async" /><span><span class="mono">Mon logiciel</span><b>DaVinci Resolve</b></span></p>
         </div>
         <div class="split">
-        <div class="split__edit">
+        <div class="split__txt">
+        <p class="txt">Mon montage, je le fais pour TacxTV, sur YouTube et TikTok, dont les bandes-annonces de Miratopia. Couper, rythmer, raconter : c’est le même réflexe que pour expliquer un logiciel à quelqu’un.</p>
+        <div class="row">
+          {profile.links.tacxtv && <a class="btn" href={profile.links.tacxtv} target="_blank" rel="noopener"><Icon name="play" />TacxTV sur YouTube</a>}
+        </div>
+        </div>
         <div class="ed" aria-hidden="true">
           <div class="ed__bar mono"><img class="ed__logo" src="/davinci-resolve.png" alt="" width="128" height="128" loading="lazy" decoding="async" />Séquence · bande-annonce Miratopia<span class="ed__tc"><span class="rec"></span>25 i/s</span></div>
           <div class="ed__tracks">
@@ -85,17 +90,16 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
             </div>
           </div>
         </div>
-        <p class="txt">Mon montage, je le fais pour TacxTV, sur YouTube et TikTok, dont les bandes-annonces de Miratopia. Couper, rythmer, raconter : c’est le même réflexe que pour expliquer un logiciel à quelqu’un.</p>
-        <div class="row">
-          {profile.links.tacxtv && <a class="btn" href={profile.links.tacxtv} target="_blank" rel="noopener"><Icon name="play" />TacxTV sur YouTube</a>}
         </div>
-        </div>
-        <a class="twitch" href={profile.links.twitch} target="_blank" rel="noopener">
+      </article>
+
+      <!-- Stream -->
+      <article class="tile tile--stream reveal" aria-label="Ma chaîne Twitch">
+        <a class="twitch twitch--wide" href={profile.links.twitch} target="_blank" rel="noopener">
           <span class="twitch__ic" aria-hidden="true"><Icon name="twitch" /></span>
           <span class="twitch__txt"><span class="mono"><span class="live-dot" aria-hidden="true"></span>Stream · en direct</span><b>pazuzuuu_</b><span>Mes lives sur Twitch, en direct, avec ma communauté.</span></span>
           <span class="twitch__cta mono" aria-hidden="true">Suivre sur Twitch ↗</span>
         </a>
-        </div>
       </article>
 
       <!-- Cinéma -->
@@ -216,8 +220,12 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
 
   /* Montage + jeux */
   .duo { display: grid; gap: 1.2rem; }
-  .split { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 1.2rem; align-items: stretch; }
-  .split__edit { display: grid; gap: 1rem; align-content: start; }
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); gap: 2rem; align-items: center; }
+  .split__txt { display: grid; gap: 1rem; align-content: center; }
+  .tile.tile--stream { padding: 0; background: none; display: block; }
+  .twitch.twitch--wide { min-height: 0; flex-direction: row; align-items: center; justify-content: flex-start; padding: 1.6rem 2rem; }
+  .twitch.twitch--wide .twitch__ic { right: 15%; top: 50%; translate: 0 -50%; width: 190px; height: 190px; }
+  .twitch.twitch--wide .twitch__cta { align-self: center; margin-left: auto; }
   .tool { margin: 0; display: inline-flex; align-items: center; gap: .7rem; justify-self: start; padding: .45rem .9rem .45rem .45rem; border-radius: 12px;
     background: #0c0f16; border: 1px solid var(--line); }
   .tool img { width: 36px; height: 36px; }
@@ -340,7 +348,8 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
 
   @media (max-width: 860px) {
     .mixer__top, .split { grid-template-columns: 1fr; }
-    .twitch { min-height: 200px; }
+    .twitch.twitch--wide { flex-direction: column; align-items: flex-start; }
+    .twitch.twitch--wide .twitch__cta { margin-left: 0; align-self: flex-start; }
     .strips { grid-template-columns: repeat(6, minmax(0, 1fr)); overflow: visible; }
     .strip { min-width: 0; }
     .fader { height: 130px; }
