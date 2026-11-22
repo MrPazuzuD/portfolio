@@ -43,6 +43,7 @@ export const profile = {
     twitch: 'https://www.twitch.tv/pazuzuuu_',
     youtube: 'https://www.youtube.com/@pazuzuuu_',
     steam: 'https://steamcommunity.com/profiles/76561199040627675/',
+    senscritique: 'https://www.senscritique.com/Pazuzuuu',
     // Chaîne pour laquelle je fais l'essentiel de mon montage (lien à confirmer)
     tacxtv: 'https://www.youtube.com/@tacxtv' as string,
   },
@@ -345,6 +346,22 @@ export const games = [
   { name: 'Age of Empires IV', cover: '/games/aoe4.webp' },
   { name: 'Planet Zoo', cover: '/games/planetzoo.webp' },
 ] as { name: string; cover: string; fav?: boolean }[];
+
+// Affiches : visuels officiels (Wikipédia), recadrés et optimisés dans public/films/
+export const films = [
+  { title: 'Carol', year: 2015, img: '/films/carol.webp' },
+  { title: 'Rencontre avec Joe Black', year: 1998, img: '/films/joe-black.webp' },
+  { title: 'Le diable s’habille en Prada', year: 2006, img: '/films/prada.webp' },
+  { title: 'Jurassic Park', year: 1993, img: '/films/jurassic-park.webp' },
+  { title: 'Australia', year: 2008, img: '/films/australia.webp' },
+  { title: 'Star Wars : épisode III', year: 2005, img: '/films/star-wars-3.webp' },
+  { title: 'Le Journal de Bridget Jones', year: 2001, img: '/films/bridget-jones.webp' },
+  { title: 'Le Dernier Samouraï', year: 2003, img: '/films/dernier-samourai.webp' },
+  { title: 'The Dark Knight', year: 2008, img: '/films/dark-knight.webp' },
+  { title: 'Terminator', year: 1984, img: '/films/terminator.webp' },
+  { title: 'Her', year: 2013, img: '/films/her.webp' },
+  { title: '12 Years a Slave', year: 2013, img: '/films/12-years.webp' },
+];
 
 export const sections = [
   { id: 'parcours', label: 'Parcours' },

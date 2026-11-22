@@ -18,6 +18,7 @@ export const achievements = [
   { id: 'live', icon: '📺', title: 'En direct', hint: 'Passer sur ma chaîne Twitch' },
   { id: 'lynx', icon: '🖼️', title: 'Œil de lynx', hint: 'Agrandir la capture de Video Toolbox' },
   { id: 'play', icon: '🎮', title: 'Partie rapide', hint: 'Lancer un jeu de la ludothèque' },
+  { id: 'cine', icon: '🎟️', title: 'Séance de minuit', hint: 'Ouvrir mon profil SensCritique' },
   { id: 'steam', icon: '🤜', title: 'Coéquipière', hint: 'Passer voir mon profil Steam' },
   { id: 'collector', icon: '💿', title: 'Collectionneuse', hint: 'Lancer tous les jeux de la ludothèque' },
   { id: 'cv', icon: '📄', title: 'Recrutement express', hint: 'Télécharger le CV' },

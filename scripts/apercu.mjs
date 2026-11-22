@@ -9,6 +9,7 @@ mkdirSync(`${out}/assets`, { recursive: true });
 cpSync('dist/index.html', `${out}/index.html`);
 cpSync('dist/favicon.svg', `${out}/favicon.svg`);
 cpSync('dist/games', `${out}/games`, { recursive: true });
+cpSync('dist/films', `${out}/films`, { recursive: true });
 cpSync('dist/miratopia.webp', `${out}/miratopia.webp`);
 cpSync('dist/video-toolbox.webp', `${out}/video-toolbox.webp`);
 for (const f of readdirSync('dist/assets')) {
@@ -18,6 +19,7 @@ const html = readFileSync(`${out}/index.html`, 'utf8')
   .replaceAll('"/assets/', '"./assets/')
   .replaceAll('"/favicon.svg"', '"./favicon.svg"')
   .replaceAll('"/games/', '"./games/')
+  .replaceAll('"/films/', '"./films/')
   .replaceAll('"/miratopia.webp"', '"./miratopia.webp"')
   .replaceAll('"/video-toolbox.webp"', '"./video-toolbox.webp"')
   .replaceAll('data-yt=', 'data-yt-off=');

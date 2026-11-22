@@ -287,6 +287,7 @@ document.addEventListener('click', (e) => {
   if (/linkedin\.com|github\.com/.test(h)) unlock('network');
   if (h.includes('open.spotify.com')) unlock('spotify');
   if (h.includes('steamcommunity.com')) unlock('steam');
+  if (h.includes('senscritique.com')) unlock('cine');
   if (/youtube\.com\/@tacxtv/i.test(h)) unlock('coulisses');
   if (/youtube\.com\/@pazuzuuu_/i.test(h)) unlock('creations');
   if (h.includes('twitch.tv')) unlock('live');

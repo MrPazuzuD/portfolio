@@ -1,5 +1,5 @@
 ---
-import { music, games, profile } from '../data/cv';
+import { music, games, films, profile } from '../data/cv';
 import Icon from './Icon.astro';
 import SectionHead from './SectionHead.astro';
 
@@ -67,6 +67,28 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
           {profile.links.tacxtv && <a class="btn" href={profile.links.tacxtv} target="_blank" rel="noopener"><Icon name="play" />TacxTV sur YouTube</a>}
           <a class="btn" href={profile.links.twitch} target="_blank" rel="noopener"><Icon name="twitch" />Twitch</a>
         </div>
+      </article>
+
+      <!-- Cinéma -->
+      <article class="tile cine depth reveal" aria-labelledby="cine-title">
+        <div class="marquee" aria-hidden="true"><span class="mono">À l’affiche</span></div>
+        <div class="games__head">
+          <div>
+            <p class="mono k">V4 · Salle de projection</p>
+            <h3 id="cine-title">Mes films préférés</h3>
+          </div>
+          <a class="btn" href={profile.links.senscritique} target="_blank" rel="noopener"><span aria-hidden="true">🎟️</span>Mon profil SensCritique</a>
+        </div>
+        <p class="txt">Le cinéma, c’est l’autre moitié de mon rapport au montage : je regarde comment c’est raconté, coupé, mis en musique. Et le doublage français me fascine.</p>
+        <ul class="posters">
+          {films.map((f) => (
+            <li class="poster tilt">
+              <img src={f.img} alt={`Affiche de ${f.title}`} width="300" height="450" loading="lazy" decoding="async" />
+              <span class="poster__cap"><b>{f.title}</b><span class="mono">{f.year}</span></span>
+            </li>
+          ))}
+        </ul>
+        <p class="credit mono">Affiches : visuels officiels des distributeurs (Wikipédia).</p>
       </article>
 
       <!-- Jeux -->
@@ -218,6 +240,33 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
   .case--more .case__title { position: static; text-shadow: none; padding: .5rem; opacity: 1; transform: none; }
   .games__head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
   .credit { font-size: .6rem; text-transform: none; }
+
+  /* Salle de projection */
+  .cine { position: relative; padding-top: 3.6rem;
+    background: radial-gradient(900px 260px at 50% 0, color-mix(in srgb, var(--gold) 14%, transparent), transparent 70%), var(--panel); }
+  .marquee {
+    position: absolute; top: -1px; left: 50%; translate: -50% 0; padding: .55rem 1.6rem .6rem; border-radius: 0 0 14px 14px;
+    background: #12141b; border: 1px solid #000; border-top: 0;
+    box-shadow: 0 10px 30px -10px color-mix(in srgb, var(--gold) 60%, transparent);
+    background-image: radial-gradient(circle, #ffe08a 0 2px, transparent 2.5px); background-size: 12px 12px; background-position: 2px 2px;
+  }
+  .marquee span { position: relative; display: block; padding: .25rem .9rem; background: #12141b; border-radius: 6px; color: var(--gold); font-size: .72rem; letter-spacing: .25em; text-shadow: 0 0 10px var(--gold); }
+  .posters { list-style: none; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .8rem; }
+  .poster { position: relative; aspect-ratio: 2 / 3; border-radius: 8px; overflow: hidden; background: #000;
+    box-shadow: 0 14px 28px -12px #000, inset 0 0 0 1px #ffffff1a; }
+  .poster img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease, filter .3s; }
+  .poster:hover img { transform: scale(1.06); filter: brightness(.55); }
+  .poster__cap { position: absolute; inset: auto .5rem .5rem; display: grid; gap: .1rem; opacity: 0; transform: translateY(6px); transition: opacity .25s, transform .25s; }
+  .poster__cap b { font-family: var(--font-title); font-size: .85rem; line-height: 1.15; text-shadow: 0 2px 6px #000; }
+  .poster__cap .mono { font-size: .6rem; color: var(--gold); }
+  .poster:hover .poster__cap { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    .marquee { animation: bulbs 1.2s steps(2) infinite; }
+    @keyframes bulbs { to { background-position: 8px 2px; } }
+  }
+  @media (max-width: 860px) { .posters { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .posters { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; } }
+  @media (hover: none) { .poster__cap { opacity: 1; transform: none; } .poster img { filter: brightness(.75); } }
   @media (min-width: 861px) { .case--more { grid-column: span 2; } }
 
   @media (max-width: 860px) {
