@@ -352,7 +352,7 @@ export const games = [
   { name: 'Cyberpunk 2077', cover: '/games/cyberpunk.webp', fav: true },
   { name: 'Satisfactory', cover: '/games/satisfactory.webp' },
   { name: 'Subnautica 2', cover: '/games/subnautica2.webp' },
-  // Illustration officielle de l'événement d'Halloween (Steam), recadrée, nom ajouté dans l'image
+  // Illustration officielle de l'événement d'Halloween (Steam), recadrée, avec le logo officiel sans le « 2 »
   { name: 'Overwatch', cover: '/games/overwatch.webp' },
   { name: 'Dead by Daylight', cover: '/games/dbd.webp' },
   { name: 'Rust', cover: '/games/rust.webp' },
