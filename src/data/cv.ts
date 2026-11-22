@@ -131,7 +131,10 @@ export const experiences: Clip[] = [
     end: '2020-07',
     period: 'Sept. 2019 – juil. 2020',
     tag: 'CDD',
-    points: ['Préparation et animation d’activités pour des groupes d’enfants'],
+    points: [
+      'Préparation et animation d’activités pour des groupes d’enfants',
+      'Encadrement et sécurité des enfants pendant les activités',
+    ],
   },
 ];
 
