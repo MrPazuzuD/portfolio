@@ -166,6 +166,7 @@ if (tl) {
     hover.querySelector('span')!.textContent = `${months[m % 12]} ${from + Math.floor(m / 12)}`;
     hover.classList.add('is-on');
     if (m < 12) unlock('past');
+    if (Math.floor(nowIdx) === m) unlock('today');
   });
   grid.addEventListener('pointerleave', () => hover.classList.remove('is-on'));
 
@@ -195,6 +196,8 @@ if (tl) {
       e.preventDefault();
       select(id);
       unlock('clip');
+      if (id === 'alterboutique') unlock('colis');
+      if (id === 'bt-musique') unlock('sources');
     });
   });
   select(tl.querySelector<HTMLElement>('.clip--pro.clip--live')?.dataset.clip ?? '');
@@ -269,6 +272,7 @@ document.querySelectorAll<HTMLElement>('[data-zoom-img]').forEach((b) => b.addEv
   img.src = b.querySelector('img')?.getAttribute('src') ?? b.dataset.zoomImg!;
   img.alt = b.querySelector('img')?.alt ?? '';
   zoomDlg.showModal();
+  unlock('lynx');
 }));
 zoomDlg?.querySelector('[data-zoom-close]')?.addEventListener('click', () => zoomDlg.close());
 zoomDlg?.addEventListener('click', (e) => { if (e.target === zoomDlg) zoomDlg.close(); });
@@ -278,7 +282,13 @@ document.addEventListener('click', (e) => {
   const a = (e.target as HTMLElement).closest('a');
   if (!a) return;
   if (a.hasAttribute('download')) unlock('cv');
-  if (/linkedin\.com|github\.com/.test(a.href)) unlock('network');
+  const h = a.href;
+  if (/linkedin\.com|github\.com/.test(h)) unlock('network');
+  if (h.includes('open.spotify.com')) unlock('spotify');
+  if (h.includes('steamcommunity.com')) unlock('steam');
+  if (/youtube\.com\/@tacxtv/i.test(h)) unlock('coulisses');
+  if (/youtube\.com\/@pazuzuuu_/i.test(h)) unlock('creations');
+  if (h.includes('twitch.tv')) unlock('live');
 });
 
 // 13. Succès : déblocage, toasts, panneau, progression gardée dans le navigateur
