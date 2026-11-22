@@ -71,11 +71,10 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
 
       <!-- Cinéma -->
       <article class="tile cine depth reveal" aria-labelledby="cine-title">
-        <div class="marquee" aria-hidden="true"><span class="mono">À l’affiche</span></div>
         <div class="games__head">
           <div>
             <p class="mono k">V4 · Salle de projection</p>
-            <h3 id="cine-title">Mes films préférés</h3>
+            <h3 id="cine-title" class="sign"><span class="sign__k mono" aria-hidden="true">À l’affiche</span>Mes films préférés</h3>
           </div>
           <a class="btn" href={profile.links.senscritique} target="_blank" rel="noopener"><span aria-hidden="true">🎟️</span>Mon profil SensCritique</a>
         </div>
@@ -242,15 +241,23 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
   .credit { font-size: .6rem; text-transform: none; }
 
   /* Salle de projection */
-  .cine { position: relative; padding-top: 3.6rem;
-    background: radial-gradient(900px 260px at 50% 0, color-mix(in srgb, var(--gold) 14%, transparent), transparent 70%), var(--panel); }
-  .marquee {
-    position: absolute; top: -1px; left: 50%; translate: -50% 0; padding: .55rem 1.6rem .6rem; border-radius: 0 0 14px 14px;
-    background: #12141b; border: 1px solid #000; border-top: 0;
-    box-shadow: 0 10px 30px -10px color-mix(in srgb, var(--gold) 60%, transparent);
-    background-image: radial-gradient(circle, #ffe08a 0 2px, transparent 2.5px); background-size: 12px 12px; background-position: 2px 2px;
+  .cine { background: radial-gradient(900px 260px at 0 0, color-mix(in srgb, var(--gold) 12%, transparent), transparent 70%), var(--panel); }
+  /* Enseigne de cinéma : cadre d'ampoules autour du titre */
+  .sign {
+    position: relative; display: inline-grid; gap: .2rem; margin-top: .5rem; padding: .95rem 1.5rem 1rem;
+    border-radius: 12px; background: #12141b; color: #fff3cf;
+    text-shadow: 0 0 12px color-mix(in srgb, var(--gold) 70%, transparent);
+    box-shadow: 0 0 0 1px #000, 0 12px 30px -12px color-mix(in srgb, var(--gold) 55%, transparent);
   }
-  .marquee span { position: relative; display: block; padding: .25rem .9rem; background: #12141b; border-radius: 6px; color: var(--gold); font-size: .72rem; letter-spacing: .25em; text-shadow: 0 0 10px var(--gold); }
+  .sign::before {
+    content: ''; position: absolute; inset: 4px; border-radius: 9px; pointer-events: none;
+    border: 3px dotted #ffd968; filter: drop-shadow(0 0 3px #ffcc33);
+  }
+  .sign__k { font-size: .58rem; letter-spacing: .3em; color: var(--gold); text-shadow: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    .sign::before { animation: bulbs 1.4s ease-in-out infinite alternate; }
+    @keyframes bulbs { from { opacity: .55; } to { opacity: 1; } }
+  }
   .posters { list-style: none; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .8rem; }
   .poster { position: relative; aspect-ratio: 2 / 3; border-radius: 8px; overflow: hidden; background: #000;
     box-shadow: 0 14px 28px -12px #000, inset 0 0 0 1px #ffffff1a; }
@@ -260,10 +267,6 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
   .poster__cap b { font-family: var(--font-title); font-size: .85rem; line-height: 1.15; text-shadow: 0 2px 6px #000; }
   .poster__cap .mono { font-size: .6rem; color: var(--gold); }
   .poster:hover .poster__cap { opacity: 1; transform: none; }
-  @media (prefers-reduced-motion: no-preference) {
-    .marquee { animation: bulbs 1.2s steps(2) infinite; }
-    @keyframes bulbs { to { background-position: 8px 2px; } }
-  }
   @media (max-width: 860px) { .posters { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   @media (max-width: 520px) { .posters { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; } }
   @media (hover: none) { .poster__cap { opacity: 1; transform: none; } .poster img { filter: brightness(.75); } }
