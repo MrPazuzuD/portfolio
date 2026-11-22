@@ -138,6 +138,11 @@ if (tl) {
     c.style.width = `calc(${(Math.max(e - s, 1) / span) * 100}% - 2px)`;
   });
   tl.querySelector<HTMLElement>('[data-tl-now]')?.style.setProperty('--x', String(nowIdx / span));
+  // Sur petit écran, la timeline s'ouvre sur les années récentes plutôt que sur 2010
+  requestAnimationFrame(() => {
+    const sc = tl.querySelector<HTMLElement>('[data-tl-scroll]');
+    if (sc && sc.scrollWidth > sc.clientWidth) sc.scrollLeft = sc.scrollWidth;
+  });
 
   const grid = tl.querySelector<HTMLElement>('[data-tl-grid]')!;
   const scroller = tl.querySelector<HTMLElement>('[data-tl-scroll]')!;
@@ -488,3 +493,12 @@ addEventListener('keydown', (e) => {
   pos = e.key.toLowerCase() === code[pos].toLowerCase() ? pos + 1 : (e.key === code[0] ? 1 : 0);
   if (pos === code.length) { pos = 0; unlock('konami'); document.documentElement.classList.toggle('arcade'); }
 });
+
+// Téléphones : aucun texte sous 11 px (les libellés techniques sont petits sur ordinateur, illisibles sur mobile)
+if (matchMedia('(max-width: 640px)').matches) {
+  document.querySelectorAll<HTMLElement>('header *, main *, footer *').forEach((el) => {
+    if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent?.trim())) return;
+    const fs = parseFloat(getComputedStyle(el).fontSize);
+    if (fs > 0 && fs < 11) el.style.fontSize = '11px';
+  });
+}

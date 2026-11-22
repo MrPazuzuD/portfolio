@@ -153,3 +153,19 @@ body::after {
 /* Défilement bloqué pendant qu'une fenêtre (succès, capture agrandie) est ouverte */
 html.no-scroll { overflow: hidden; }
 html.no-scroll body { position: fixed; top: var(--lock-top, 0); left: 0; right: var(--sbw, 0px); }
+
+/* Téléphones et tablettes : lisibilité et cibles tactiles */
+@media (max-width: 640px) {
+  .toasts { left: .6rem; right: .6rem; bottom: .6rem; }
+  .toast { min-width: 0; padding: .55rem .8rem .55rem .55rem; gap: .7rem; }
+  .toast__icon { width: 34px; height: 34px; font-size: 1.05rem; border-radius: 8px; }
+  .toast b { font-size: .88rem; }
+  .toast span { font-size: .78rem; }
+  .toast:nth-last-child(n+3) { display: none; }
+}
+@media (pointer: coarse) {
+  .insp__nav button { width: 40px !important; height: 36px !important; }
+  .ms__b { width: 28px !important; height: 26px !important; }
+  .knob { width: 36px !important; height: 36px !important; }
+  .zoom button { min-width: 40px !important; height: 38px !important; }
+}
