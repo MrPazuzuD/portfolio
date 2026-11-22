@@ -39,11 +39,14 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
         </div>
       </div>
 
-      <div class="strips" role="group" aria-label="Styles que j’écoute (faders réglables)">
+      <div class="strips" role="group" aria-label="Ma console : styles que j’écoute (faders, muet, solo et boutons rotatifs réglables)" data-strips>
         {music.genres.map((g, i) => (
-          <div class="strip" style={`--lv:${levels[i]}`}>
-            <span class="knob" aria-hidden="true" style={`--r:${(i * 37) % 120 - 60}deg`}></span>
-            <span class="ms" aria-hidden="true"><i>M</i><i>S</i></span>
+          <div class="strip" style={`--lv:${levels[i]};--r:${(i * 37) % 120 - 60}deg`} data-strip>
+            <button type="button" class="knob" role="slider" aria-label={`Panoramique ${g}`} aria-valuemin="-135" aria-valuemax="135" aria-valuenow={(i * 37) % 120 - 60} data-knob></button>
+            <span class="ms">
+              <button type="button" class="ms__b ms__m" aria-pressed="false" aria-label={`Couper ${g}`} data-mute>M</button>
+              <button type="button" class="ms__b ms__s" aria-pressed="false" aria-label={`Solo ${g}`} data-solo>S</button>
+            </span>
             <div class="fader">
               <span class="meter" aria-hidden="true"><i></i></span>
               <input type="range" min="0" max="100" value={levels[i]} aria-label={`Volume ${g}`} data-fader />
@@ -51,6 +54,16 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
             <span class="name">{g}</span>
           </div>
         ))}
+        <div class="strip strip--master" style="--lv:100">
+          <span class="master__k mono" aria-hidden="true">Master</span>
+          <span class="master__lr mono" aria-hidden="true">L · R</span>
+          <div class="fader">
+            <span class="meter" aria-hidden="true"><i></i></span>
+            <span class="meter" aria-hidden="true"><i></i></span>
+            <input type="range" min="0" max="100" value="100" aria-label="Volume général" data-master />
+          </div>
+          <span class="name">Et tout le reste…</span>
+        </div>
       </div>
     </article>
 
@@ -179,7 +192,8 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
   .pl__link:hover { text-decoration: underline; }
 
   .strips {
-    display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px; padding: 14px;
+    --master: 100;
+    display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)) minmax(0, 1.5fr); gap: 6px; padding: 14px;
     border-radius: 14px; background: linear-gradient(#0d1017, #090b10); border: 1px solid #000;
     box-shadow: inset 0 2px 10px rgb(0 0 0 / .7);
     overflow-x: auto;
@@ -189,18 +203,30 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
     border-radius: 10px; background: linear-gradient(180deg, #1d2330, #151a24); border: 1px solid #262d3c;
     box-shadow: inset 0 1px 0 rgb(255 255 255 / .06);
   }
+  .strip { --on: 1; transition: opacity .2s, filter .2s; }
+  .strip.is-off { opacity: .4; filter: saturate(.3); }
   .knob {
-    width: 28px; height: 28px; border-radius: 50%; position: relative;
+    width: 28px; height: 28px; border-radius: 50%; position: relative; border: 0; padding: 0; cursor: grab; touch-action: none;
     background: radial-gradient(circle at 35% 30%, #4a5368, #1b2029 70%); box-shadow: 0 2px 4px #000, inset 0 1px 0 #ffffff22;
     transform: rotate(var(--r));
   }
   .knob::after { content: ''; position: absolute; left: 50%; top: 3px; width: 2px; height: 9px; margin-left: -1px; background: var(--gold); border-radius: 1px; }
   .ms { display: flex; gap: 3px; }
-  .ms i { font: 600 .55rem var(--font-mono); font-style: normal; width: 18px; height: 16px; display: grid; place-items: center; border-radius: 3px; background: #262d3c; color: var(--muted); }
-  .ms i:last-child { background: color-mix(in srgb, var(--gold) 70%, #262d3c); color: #14110a; }
+  .knob:active { cursor: grabbing; }
+  .ms__b { font: 700 .55rem var(--font-mono); width: 20px; height: 18px; padding: 0; display: grid; place-items: center; border-radius: 4px; cursor: pointer;
+    background: #262d3c; color: var(--muted); border: 1px solid #323a4d; box-shadow: 0 2px 0 #0b0d13; transition: background .15s, color .15s, transform .1s; }
+  .ms__b:active { transform: translateY(1px); box-shadow: none; }
+  .ms__m[aria-pressed='true'] { background: var(--rec); color: #fff; border-color: var(--rec); box-shadow: 0 0 10px var(--rec); }
+  .ms__s[aria-pressed='true'] { background: var(--gold); color: #14110a; border-color: var(--gold); box-shadow: 0 0 10px var(--gold); }
+  .strip--master { min-width: 80px; border-color: color-mix(in srgb, var(--gold) 55%, #262d3c);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 14%, #1d2330), #151a24); }
+  .master__k { color: var(--gold); font-size: .62rem; font-weight: 700; height: 28px; display: grid; place-items: center; }
+  .master__lr { font-size: .55rem; height: 18px; display: grid; place-items: center; }
+  .strip--master .meter i { height: calc(var(--master) * 1%); }
+  .strip--master .name { color: var(--gold); }
   .fader { position: relative; height: 170px; display: flex; gap: 6px; align-items: stretch; }
   .meter { width: 6px; border-radius: 3px; background: #0a0c11; overflow: hidden; display: flex; align-items: flex-end; }
-  .meter i { width: 100%; height: calc(var(--lv) * 1%); background: linear-gradient(to top, #39ff88 0 60%, var(--gold) 60% 85%, var(--rec) 85%); transition: height .15s; }
+  .meter i { width: 100%; height: calc(var(--lv) * var(--on) * var(--master) / 100 * 1%); background: linear-gradient(to top, #39ff88 0 60%, var(--gold) 60% 85%, var(--rec) 85%); transition: height .15s; }
   .fader input {
     writing-mode: vertical-lr; direction: rtl; width: 30px; height: 100%; margin: 0;
     appearance: none; -webkit-appearance: none; background: transparent; cursor: ns-resize;
@@ -351,6 +377,15 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
     .twitch.twitch--wide { flex-direction: column; align-items: flex-start; }
     .twitch.twitch--wide .twitch__cta { margin-left: 0; align-self: flex-start; }
     .strips { grid-template-columns: repeat(6, minmax(0, 1fr)); overflow: visible; }
+    .strip--master { grid-column: 1 / -1; grid-template-columns: auto auto minmax(0, 1fr) auto; align-items: center; justify-items: stretch; gap: 1rem; padding: .7rem 1rem; }
+    .strip--master .fader { height: 34px; width: 100%; flex-direction: column; justify-content: center; }
+    .strip--master .meter { display: none; }
+    .strip--master .name { min-height: 0; text-align: right; }
+    .strip--master .fader input { writing-mode: horizontal-tb; direction: ltr; width: 100%; height: 30px; }
+    .strip--master .fader input::-webkit-slider-runnable-track { width: auto; height: 4px; }
+    .strip--master .fader input::-moz-range-track { width: auto; height: 4px; }
+    .strip--master .fader input::-webkit-slider-thumb { width: 16px; height: 30px; margin-left: 0; margin-top: -13px; background: linear-gradient(90deg, #e9ecf2, #9aa3b5 45%, #c9ceda 55%, #8a93a6); }
+    .strip--master .fader input::-moz-range-thumb { width: 16px; height: 30px; background: linear-gradient(90deg, #e9ecf2, #9aa3b5 45%, #c9ceda 55%, #8a93a6); }
     .strip { min-width: 0; }
     .fader { height: 130px; }
     .games { grid-template-columns: repeat(6, minmax(0, 1fr)); }
@@ -360,6 +395,8 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
   }
   @media (max-width: 520px) {
     .strips { grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 10px; }
+    .strip--master { grid-template-columns: auto minmax(0, 1fr) auto; gap: .7rem; }
+    .strip--master .master__lr { display: none; }
     .name { font-size: .62rem; }
   }
 </style>

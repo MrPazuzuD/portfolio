@@ -10,6 +10,7 @@ export const achievements = [
   { id: 'subs', icon: '💬', title: 'Spectatrice attentive', hint: 'Lire tous les sous-titres de l’accueil' },
   { id: 'mix', icon: '🎚️', title: 'Ingé son', hint: 'Bouger un fader de la console' },
   { id: 'mute', icon: '🔇', title: 'Silence radio', hint: 'Couper complètement une piste' },
+  { id: 'solo', icon: '🎸', title: 'Solo de guitare', hint: 'Mettre une piste de la console en solo' },
   { id: 'max', icon: '🔊', title: 'Tout à fond', hint: 'Pousser une piste au maximum' },
   { id: 'spotify', icon: '🎧', title: 'Playlist infinie', hint: 'Ouvrir ma playlist Spotify' },
   { id: 'creations', icon: '🎤', title: 'Première écoute', hint: 'Découvrir mes créations sur YouTube' },

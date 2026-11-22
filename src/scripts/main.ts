@@ -228,15 +228,72 @@ if (subs && !reduceMotion) {
 }
 document.querySelector('#hero-title')?.addEventListener('pointerenter', () => unlock('glitch'));
 
-// 9. Faders de la console : le vumètre suit le curseur
-document.querySelectorAll<HTMLInputElement>('[data-fader]').forEach((f) => {
-  f.addEventListener('input', () => {
-    f.closest<HTMLElement>('.strip')?.style.setProperty('--lv', f.value);
-    unlock('mix');
-    if (Number(f.value) === 0) unlock('mute');
-    if (Number(f.value) === 100) unlock('max');
+// 9. Console de mixage : faders, muet, solo, boutons rotatifs, master
+const strips = document.querySelector<HTMLElement>('[data-strips]');
+if (strips) {
+  const all = [...strips.querySelectorAll<HTMLElement>('[data-strip]')];
+  const refresh = () => {
+    const soloed = all.filter((st) => st.querySelector('[data-solo]')?.getAttribute('aria-pressed') === 'true');
+    all.forEach((st) => {
+      const muted = st.querySelector('[data-mute]')?.getAttribute('aria-pressed') === 'true';
+      const off = muted || (soloed.length > 0 && !soloed.includes(st));
+      st.classList.toggle('is-off', off);
+      st.style.setProperty('--on', off ? '0' : '1');
+    });
+  };
+  all.forEach((st) => {
+    st.querySelector<HTMLInputElement>('[data-fader]')?.addEventListener('input', (e) => {
+      const f = e.target as HTMLInputElement;
+      st.style.setProperty('--lv', f.value);
+      unlock('mix');
+      if (Number(f.value) === 0) unlock('mute');
+      if (Number(f.value) === 100) unlock('max');
+    });
+    st.querySelector('[data-mute]')?.addEventListener('click', (e) => {
+      const b = e.currentTarget as HTMLElement;
+      const on = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', String(on));
+      if (on) unlock('mute');
+      refresh();
+    });
+    st.querySelector('[data-solo]')?.addEventListener('click', (e) => {
+      const b = e.currentTarget as HTMLElement;
+      const on = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', String(on));
+      if (on) unlock('solo');
+      refresh();
+    });
+    // Bouton rotatif : glisser vers le haut ou le bas, ou flèches du clavier
+    const knob = st.querySelector<HTMLElement>('[data-knob]');
+    if (knob) {
+      let val = Number(knob.getAttribute('aria-valuenow')) || 0, startY = 0, startV = 0, moved = false;
+      const set = (v: number) => {
+        val = Math.max(-135, Math.min(135, Math.round(v)));
+        st.style.setProperty('--r', `${val}deg`);
+        knob.setAttribute('aria-valuenow', String(val));
+        unlock('mix');
+      };
+      knob.addEventListener('pointerdown', (e) => { startY = e.clientY; startV = val; moved = false; knob.setPointerCapture(e.pointerId); });
+      knob.addEventListener('pointermove', (e) => {
+        if (!knob.hasPointerCapture(e.pointerId)) return;
+        const dy = startY - e.clientY;
+        if (Math.abs(dy) > 2) moved = true;
+        set(startV + dy * 2);
+      });
+      knob.addEventListener('click', () => { if (!moved) set(val + 45 > 135 ? -135 : val + 45); });
+      knob.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowRight') { set(val + 15); e.preventDefault(); }
+        if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { set(val - 15); e.preventDefault(); }
+      });
+    }
   });
-});
+  strips.querySelector<HTMLInputElement>('[data-master]')?.addEventListener('input', (e) => {
+    const v = (e.target as HTMLInputElement).value;
+    strips.style.setProperty('--master', v);
+    unlock('mix');
+    if (Number(v) === 0) unlock('mute');
+  });
+}
 
 // 10. Inclinaison 3D au survol (souris uniquement)
 if (!reduceMotion && matchMedia('(hover: hover) and (pointer: fine)').matches) {
