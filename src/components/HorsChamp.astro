@@ -71,14 +71,13 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
 
       <!-- Cinéma -->
       <article class="tile cine depth reveal" aria-labelledby="cine-title">
+        <p class="mono k">V4 · Salle de projection</p>
         <div class="games__head">
-          <div>
-            <p class="mono k">V4 · Salle de projection</p>
-            <h3 id="cine-title" class="sign"><span class="sign__k mono" aria-hidden="true">À l’affiche</span>Mes films préférés</h3>
-          </div>
+          <h3 id="cine-title">Mes films préférés</h3>
           <a class="btn" href={profile.links.senscritique} target="_blank" rel="noopener"><span aria-hidden="true">🎟️</span>Mon profil SensCritique</a>
         </div>
         <p class="txt">Le cinéma, c’est l’autre moitié de mon rapport au montage : je regarde comment c’est raconté, coupé, mis en musique. Et le doublage français me fascine.</p>
+        <p class="sign" aria-hidden="true"><span class="mono">À l’affiche</span></p>
         <ul class="posters">
           {films.map((f) => (
             <li class="poster tilt">
@@ -242,18 +241,11 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
 
   /* Salle de projection */
   .cine { background: radial-gradient(900px 260px at 0 0, color-mix(in srgb, var(--gold) 12%, transparent), transparent 70%), var(--panel); }
-  /* Enseigne de cinéma : cadre d'ampoules autour du titre */
-  .sign {
-    position: relative; display: inline-grid; gap: .2rem; margin-top: .5rem; padding: .95rem 1.5rem 1rem;
-    border-radius: 12px; background: #12141b; color: #fff3cf;
-    text-shadow: 0 0 12px color-mix(in srgb, var(--gold) 70%, transparent);
-    box-shadow: 0 0 0 1px #000, 0 12px 30px -12px color-mix(in srgb, var(--gold) 55%, transparent);
-  }
-  .sign::before {
-    content: ''; position: absolute; inset: 4px; border-radius: 9px; pointer-events: none;
-    border: 3px dotted #ffd968; filter: drop-shadow(0 0 3px #ffcc33);
-  }
-  .sign__k { font-size: .58rem; letter-spacing: .3em; color: var(--gold); text-shadow: none; }
+  /* Enseigne de cinéma, centrée au-dessus des affiches comme un fronton */
+  .sign { justify-self: center; position: relative; margin: .4rem 0 0; padding: .75rem 1.6rem; border-radius: 12px; background: #12141b;
+    box-shadow: 0 0 0 1px #000, 0 12px 30px -12px color-mix(in srgb, var(--gold) 55%, transparent); }
+  .sign::before { content: ''; position: absolute; inset: 4px; border-radius: 9px; pointer-events: none; border: 3px dotted #ffd968; filter: drop-shadow(0 0 3px #ffcc33); }
+  .sign span { display: block; font-size: .8rem; letter-spacing: .35em; color: #fff3cf; text-shadow: 0 0 10px var(--gold), 0 0 22px color-mix(in srgb, var(--gold) 60%, transparent); }
   @media (prefers-reduced-motion: no-preference) {
     .sign::before { animation: bulbs 1.4s ease-in-out infinite alternate; }
     @keyframes bulbs { from { opacity: .55; } to { opacity: 1; } }
