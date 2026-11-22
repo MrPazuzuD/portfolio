@@ -14,6 +14,8 @@ export interface Clip {
   /** Format AAAA-MM. `end: null` = en cours */
   start: string;
   end: string | null;
+  /** Autres passages au même poste, affichés comme clips séparés sur la timeline */
+  more?: { start: string; end: string }[];
   /** Texte affiché pour les dates (le CV n'a parfois que les années) */
   period: string;
   tag?: string;
@@ -101,7 +103,8 @@ export const experiences: Clip[] = [
     place: 'Toul',
     start: '2018-07',
     end: '2018-08',
-    period: 'Juil. 2018',
+    more: [{ start: '2026-08', end: '2026-09' }],
+    period: 'Juil. 2018 · août – sept. 2026',
     tag: 'Saisonnier',
     points: ['Préparation et expédition des commandes'],
   },

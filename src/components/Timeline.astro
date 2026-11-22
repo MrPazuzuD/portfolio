@@ -13,9 +13,11 @@ const pos = (c: Clip) => {
   const s = toMonths(c.start);
   // Un clip en cours s'étire jusqu'au bord de la timeline, en fondu
   const e = c.end ? toMonths(c.end) : total;
-  return `left:${(s / total) * 100}%;width:${(Math.max(e - s, 3) / total) * 100}%`;
+  return `left:${(s / total) * 100}%;width:${(Math.max(e - s, 1) / total) * 100}%`;
 };
 const all = [...experiences, ...formations, ...creaClips];
+// Un poste occupé plusieurs fois donne un clip par passage
+const segments = all.flatMap((c) => [c, ...(c.more ?? []).map((m) => ({ ...c, start: m.start, end: m.end }))]);
 const years = Array.from({ length: timelineRange.to - timelineRange.from }, (_, i) => timelineRange.from + i);
 const nowPct = toMonths(null) / total;
 const hrefFor = (c: Clip) => (c.track === 'crea' ? (c.id === 'contenu' ? '#hors-champ' : `#projet-${c.id}`) : `#clip-${c.id}`);
@@ -59,7 +61,7 @@ const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org,
             <ul class="tl__lanes" aria-label="Clips du parcours">
               {lanes.map((l) => (
                 <li class="tl__lane">
-                  {all.filter((c) => c.lane === l.id).map((c) => (
+                  {segments.filter((c) => c.lane === l.id).map((c) => (
                     <a class={`clip clip--${c.track} ${c.end ? '' : 'clip--live'}`} href={hrefFor(c)} style={pos(c)} data-clip={c.id}
                        aria-label={`${c.title}, ${c.org}, ${c.period}`}>
                       <span class="clip__thumb" aria-hidden="true">{c.org.slice(0, 1)}</span>
@@ -167,7 +169,7 @@ const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org,
     background: repeating-linear-gradient(90deg, #ffffff06 0 1px, transparent 1px calc(100% / (var(--total) / 12)));
   }
   .clip {
-    position: absolute; top: 7px; bottom: 7px; border-radius: 7px; overflow: hidden;
+    position: absolute; top: 7px; bottom: 7px; min-width: 18px; border-radius: 7px; overflow: hidden;
     display: flex; align-items: center; gap: .45rem; padding: 0 .45rem 0 .25rem; text-decoration: none;
     font-size: .74rem; font-weight: 600; white-space: nowrap; color: #0b0d13;
     box-shadow: inset 0 1px 0 rgb(255 255 255 / .45), inset 0 -2px 0 rgb(0 0 0 / .18), 0 4px 10px rgb(0 0 0 / .45);
@@ -181,6 +183,7 @@ const inspect = Object.fromEntries(all.map((c) => [c.id, { t: c.title, o: c.org,
     box-shadow: inset 0 0 0 1px rgb(255 255 255 / .15);
   }
   .clip__name { overflow: hidden; text-overflow: ellipsis; }
+  .clip:not(.clip--crea) { padding-right: .25rem; }
   .clip--pro { background: linear-gradient(180deg, #5fe0cf, var(--pro) 55%, #2aa596); }
   .clip--formation { background: linear-gradient(180deg, #ffd34d, var(--formation) 55%, #cf9b00); }
   .clip--crea {
