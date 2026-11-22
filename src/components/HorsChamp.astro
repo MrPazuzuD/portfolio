@@ -56,7 +56,7 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
 
     <div class="duo">
       <!-- Montage -->
-      <article class="tile tile--edit depth reveal">
+      <article class="tile tile--edit depth glow reveal" style="--glow: var(--crea)">
         <p class="mono k">V3 · Montage</p>
         <div class="games__head">
           <h3>Je monte depuis 2020</h3>
@@ -123,7 +123,7 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
       </article>
 
       <!-- Jeux -->
-      <article class="tile depth reveal">
+      <article class="tile depth glow reveal" style="--glow: #39ff88">
         <p class="mono k">Chutier · Jeux vidéo</p>
         <div class="games__head">
           <h3>Ma ludothèque</h3>
@@ -238,9 +238,9 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
     position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; gap: 1rem;
     padding: 1.4rem; border-radius: 16px; text-decoration: none; color: #fff; min-height: 260px;
     background: radial-gradient(circle at 85% 15%, rgb(255 255 255 / .18), transparent 45%), linear-gradient(150deg, #9146ff, #5b21b6 70%, #3b1478);
-    border: 1px solid #b38bff55; box-shadow: 0 20px 40px -18px #9146ff, inset 0 1px 0 rgb(255 255 255 / .2); transition: transform .25s, box-shadow .25s;
+    border: 1px solid #b38bff55; box-shadow: 0 10px 22px -16px #9146ffaa, inset 0 1px 0 rgb(255 255 255 / .2); transition: transform .25s, box-shadow .25s;
   }
-  .twitch:hover { transform: translateY(-3px); box-shadow: 0 26px 50px -18px #9146ff, inset 0 1px 0 rgb(255 255 255 / .25); }
+  .twitch:hover { transform: translateY(-3px); box-shadow: 0 14px 28px -16px #9146ffcc, inset 0 1px 0 rgb(255 255 255 / .25); }
   /* Grand logo Twitch en filigrane */
   .twitch__ic { position: absolute; right: -18px; top: -14px; width: 150px; height: 150px; opacity: .16; transform: rotate(-12deg); }
   .twitch__ic :global(svg) { width: 100%; height: 100%; }

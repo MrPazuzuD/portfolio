@@ -140,3 +140,12 @@ body::after {
   content: ''; position: fixed; inset: 0; z-index: 199; pointer-events: none;
   background: repeating-linear-gradient(0deg, rgb(0 0 0 / .18) 0 1px, transparent 1px 3px);
 }
+
+/* Petit halo lumineux en haut à gauche des cartes, dans la couleur de chacune */
+.glow {
+  --glow: var(--gold);
+  background:
+    radial-gradient(900px 260px at 0 0, color-mix(in srgb, var(--glow) 12%, transparent), transparent 70%),
+    linear-gradient(180deg, rgb(255 255 255 / .045), transparent 40%),
+    var(--panel);
+}
