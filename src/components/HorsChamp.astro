@@ -25,7 +25,9 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
         <div class="side">
           <div class="inputs">
             <p class="mono k2">Entrées</p>
-            <ul>{music.instruments.map((m) => <li><span class="led" aria-hidden="true"></span>{m}</li>)}</ul>
+            <ul>{music.instruments.map((m) => (
+              <li class={m.main ? 'is-main' : 'is-side'}><span class="led" aria-hidden="true"></span><b>{m.name}</b><span class="mono">{m.note}</span></li>
+            ))}</ul>
           </div>
           <div class="pl">
             <p class="mono k2">Playlist en aléatoire</p>
@@ -146,7 +148,13 @@ const levels = music.genres.map((_, i) => 82 + ((i * 7) % 15));
   .side { display: grid; gap: 1rem; align-content: start; }
   .inputs ul { list-style: none; display: flex; flex-wrap: wrap; gap: .5rem; }
   .inputs li { display: flex; align-items: center; gap: .5rem; padding: .4rem .8rem; border-radius: 8px; background: #0c0f16; border: 1px solid var(--line); font-weight: 600; font-size: .92rem; }
-  .led { width: 8px; height: 8px; border-radius: 50%; background: #39ff88; box-shadow: 0 0 8px #39ff88; }
+  .led { width: 8px; height: 8px; border-radius: 50%; background: #39ff88; box-shadow: 0 0 8px #39ff88; flex: none; }
+  .inputs li b { font-weight: 600; }
+  .inputs li .mono { font-size: .58rem; text-transform: none; color: var(--muted); }
+  .inputs .is-main { padding: .55rem .95rem; font-size: 1rem; border-color: color-mix(in srgb, #39ff88 35%, var(--line)); box-shadow: inset 0 0 0 1px rgb(57 255 136 / .08); }
+  .inputs .is-main .mono { color: #8fe9b3; }
+  .inputs .is-side { opacity: .7; font-size: .85rem; }
+  .inputs .is-side .led { background: #f2b705; box-shadow: 0 0 6px #f2b705; }
   .pl { padding: .9rem 1rem; border-radius: 12px; background: #0c0f16; border: 1px solid var(--line); }
   .pl__name { font-family: var(--font-title); font-weight: 600; font-size: 1.15rem; }
   .pl__count { color: var(--muted); font-size: .9rem; }

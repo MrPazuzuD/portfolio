@@ -322,7 +322,13 @@ export const projects = [
 ];
 
 export const music = {
-  instruments: ['Chant', 'Guitare', 'Batterie'],
+  // main : mes deux atouts, mis en avant ; les autres apparaissent en second plan
+  instruments: [
+    { name: 'Chant', note: 'depuis toujours', main: true },
+    { name: 'Guitare', note: 'depuis 23 ans', main: true },
+    { name: 'Piano', note: 'un peu', main: false },
+    { name: 'Batterie', note: 'un peu', main: false },
+  ],
   // Tranches de la console : j'écoute de tout, donc tous les curseurs sont en haut
   genres: [
     'Jazz', 'Rock', 'Metal', 'Rap', 'Électro', 'Techno', 'Classique',
@@ -330,7 +336,7 @@ export const music = {
   ],
   // Mettre ici le lien public de la playlist Spotify pour afficher le bouton
   playlist: { name: 'Souvenir d’enfant', count: '3 900+', spotify: 'https://open.spotify.com/playlist/3zofhGkDNWlSXyc4t15vP5' as string },
-  text: 'Je chante depuis toute petite, et je joue de la guitare et de la batterie. Côté écoute, je passe de tout à tout, sans étiquette : la musique, pour moi, c’est surtout de la mémoire et de l’émotion.',
+  text: 'Le chant et la guitare sont mes deux instruments : je chante depuis toujours et je joue de la guitare depuis 23 ans. Je me débrouille aussi un peu au piano et à la batterie. Côté écoute, je passe de tout à tout, sans étiquette : la musique, pour moi, c’est surtout de la mémoire et de l’émotion.',
 };
 
 // Jaquettes : visuels officiels Steam, recadrés et optimisés dans public/games/
